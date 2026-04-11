@@ -1,0 +1,137 @@
+@use '../../styles/abstracts/variables' as *;
+@use '../../styles/abstracts/mixins' as *;
+
+.panel {
+  @include flex-col;
+  position: fixed;
+  right: 0;
+  top: $header-height;
+  width: $right-panel-width;
+  height: calc(100vh - #{$header-height});
+  background-color: $color-surface-container-low;
+  border-left: 1px solid rgba($color-outline-variant, 0.12);
+}
+
+.header {
+  @include flex-between;
+  gap: $spacing-3;
+  padding: $spacing-6;
+  border-bottom: 1px solid rgba($color-outline-variant, 0.1);
+}
+
+.title {
+  margin: 0;
+  color: $color-on-surface;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.closeButton {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  color: $color-on-surface-variant;
+  transition: background-color $transition-fast, color $transition-fast;
+
+  &:hover {
+    background-color: rgba($color-surface-container-highest, 0.9);
+    color: $color-on-surface;
+  }
+}
+
+.body {
+  @include custom-scrollbar;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: $spacing-6;
+  overflow-y: auto;
+  padding: $spacing-6;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.label {
+  @include label-uppercase;
+}
+
+.description {
+  margin: 0;
+  color: $color-on-surface;
+  font-size: $font-size-base;
+  line-height: 1.6;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+.chip {
+  padding: 2px 8px;
+  border-radius: $radius-md;
+  background-color: $color-surface-container-highest;
+  color: $color-on-surface;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.metadataCard {
+  @include surface-card($radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-4;
+  background-color: $color-surface-container;
+}
+
+.metadataRow {
+  @include flex-between;
+  gap: $spacing-4;
+}
+
+.metadataLabel {
+  color: $color-on-surface-variant;
+  font-size: $font-size-sm;
+}
+
+.metadataValue {
+  color: $color-on-surface;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-align: right;
+}
+
+.confidenceValue {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+  color: $color-on-surface;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.confidenceDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.confidenceHigh {
+  background-color: #4ade80;
+}
+
+.confidenceMedium {
+  background-color: #facc15;
+}
+
+.confidenceLow {
+  background-color: $color-error;
+}

@@ -1,0 +1,53 @@
+@use '../../styles/abstracts/variables' as *;
+@use '../../styles/abstracts/mixins' as *;
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: $color-background;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding-top: $header-height;
+}
+
+.main {
+  @include flex-col;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  margin-left: $sidebar-width;
+  transition: margin-right $transition-slow;
+}
+
+.mainShifted {
+  margin-right: $right-panel-width;
+}
+
+.rightPanel {
+  width: 0;
+  flex-shrink: 0;
+  transition: width $transition-slow;
+}
+
+.rightPanelOpen {
+  width: $right-panel-width;
+}
+
+// ─── Mobile ───────────────────────────────────────────────────────────────────
+
+@include respond-to(md) {
+  .main {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .rightPanel {
+    display: none;
+  }
+}

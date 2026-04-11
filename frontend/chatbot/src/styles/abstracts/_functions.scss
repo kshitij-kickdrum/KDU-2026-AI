@@ -1,0 +1,15 @@
+// ─── Unit Helpers ────────────────────────────────────────────────────────────
+
+@function strip-unit($number) {
+  @return $number / ($number * 0 + 1);
+}
+
+@function rem($px, $base: 16) {
+  @return #{strip-unit($px) / $base}rem;
+}
+
+// ─── Color Alpha ─────────────────────────────────────────────────────────────
+
+@function alpha($color, $opacity) {
+  @return rgba($color, $opacity);
+}

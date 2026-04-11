@@ -1,0 +1,127 @@
+// ─── Color Tokens (from Stitch design system) ───────────────────────────────
+
+// Backgrounds & Surfaces
+$color-background:              #111319;
+$color-surface:                 #111319;
+$color-surface-dim:             #111319;
+$color-surface-container-lowest:#0c0e14;
+$color-surface-container-low:   #191b22;
+$color-surface-container:       #1e1f26;
+$color-surface-container-high:  #282a30;
+$color-surface-container-highest:#33343b;
+$color-surface-bright:          #373940;
+$color-surface-variant:         #33343b;
+
+// Primary
+$color-primary:                 #c0c1ff;
+$color-primary-container:       #8083ff;
+$color-primary-fixed:           #e1e0ff;
+$color-primary-fixed-dim:       #c0c1ff;
+$color-on-primary:              #1000a9;
+$color-on-primary-container:    #0d0096;
+$color-on-primary-fixed:        #07006c;
+$color-on-primary-fixed-variant:#2f2ebe;
+$color-inverse-primary:         #494bd6;
+
+// Secondary
+$color-secondary:               #c0c1ff;
+$color-secondary-container:     #42447b;
+$color-secondary-fixed:         #e1e0ff;
+$color-secondary-fixed-dim:     #c0c1ff;
+$color-on-secondary:            #292a60;
+$color-on-secondary-container:  #b2b3f2;
+$color-on-secondary-fixed:      #13144a;
+$color-on-secondary-fixed-variant: #404178;
+
+// Tertiary (used for tool badges — amber)
+$color-tertiary:                #ffb783;
+$color-tertiary-container:      #d97721;
+$color-tertiary-fixed:          #ffdcc5;
+$color-tertiary-fixed-dim:      #ffb783;
+$color-on-tertiary:             #4f2500;
+$color-on-tertiary-container:   #452000;
+$color-on-tertiary-fixed:       #301400;
+$color-on-tertiary-fixed-variant: #703700;
+
+// On-surface
+$color-on-surface:              #e2e2eb;
+$color-on-surface-variant:      #c7c4d7;
+$color-on-background:           #e2e2eb;
+
+// Outline
+$color-outline:                 #908fa0;
+$color-outline-variant:         #464554;
+
+// Error
+$color-error:                   #ffb4ab;
+$color-error-container:         #93000a;
+$color-on-error:                #690005;
+$color-on-error-container:      #ffdad6;
+
+// Inverse
+$color-inverse-surface:         #e2e2eb;
+$color-inverse-on-surface:      #2e3037;
+
+// ─── Typography ─────────────────────────────────────────────────────────────
+
+$font-family-base: 'Inter', sans-serif;
+
+$font-size-xs:   11px;
+$font-size-sm:   12px;
+$font-size-base: 14px;
+$font-size-md:   16px;
+$font-size-lg:   18px;
+$font-size-xl:   24px;
+$font-size-2xl:  32px;
+
+$font-weight-regular: 400;
+$font-weight-medium:  500;
+$font-weight-semibold:600;
+$font-weight-bold:    700;
+$font-weight-extrabold: 800;
+
+// ─── Layout ─────────────────────────────────────────────────────────────────
+
+$sidebar-width:       240px;
+$right-panel-width:   320px;
+$header-height:       64px;
+
+// ─── Spacing ─────────────────────────────────────────────────────────────────
+
+$spacing-1:  4px;
+$spacing-2:  8px;
+$spacing-3:  12px;
+$spacing-4:  16px;
+$spacing-5:  20px;
+$spacing-6:  24px;
+$spacing-8:  32px;
+$spacing-10: 40px;
+$spacing-12: 48px;
+
+// ─── Border Radius ───────────────────────────────────────────────────────────
+
+$radius-sm:   4px;
+$radius-md:   8px;
+$radius-lg:   12px;
+$radius-xl:   16px;
+$radius-2xl:  20px;
+$radius-full: 9999px;
+
+// ─── Z-index ─────────────────────────────────────────────────────────────────
+
+$z-header:  50;
+$z-toast:   60;
+$z-overlay: 40;
+
+// ─── Transitions ─────────────────────────────────────────────────────────────
+
+$transition-fast:   0.15s ease;
+$transition-base:   0.2s ease;
+$transition-slow:   0.3s ease;
+
+// ─── Breakpoints ─────────────────────────────────────────────────────────────
+
+$bp-sm:  576px;
+$bp-md:  768px;
+$bp-lg:  1024px;
+$bp-xl:  1280px;

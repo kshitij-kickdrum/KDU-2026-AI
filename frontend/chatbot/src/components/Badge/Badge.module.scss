@@ -1,0 +1,39 @@
+@use '../../styles/abstracts/variables' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px $spacing-2;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-extrabold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+// model: gpt-4o  → secondary container (blue-purple)
+.model {
+  background-color: $color-secondary-container;
+  color: $color-on-secondary-container;
+}
+
+// tool: weather_tool → tertiary container (amber)
+.tool {
+  background-color: $color-tertiary-container;
+  color: $color-on-tertiary-container;
+}
+
+// style: Expert → primary tint
+.style-expert {
+  background-color: rgba($color-primary-container, 0.2);
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.2);
+}
+
+// style: Child → secondary on-container tint (purple)
+.style-child {
+  background-color: rgba($color-on-secondary-container, 0.15);
+  color: $color-on-secondary-container;
+  border: 1px solid rgba($color-on-secondary-container, 0.25);
+}

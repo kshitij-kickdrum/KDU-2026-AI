@@ -1,0 +1,50 @@
+@use '../../../../styles/abstracts/variables' as *;
+@use '../../../../styles/abstracts/mixins' as *;
+
+.wrapper {
+  @include flex-col;
+  align-items: flex-start;
+  gap: $spacing-3;
+  max-width: 85%;
+}
+
+// ─── Badge row ────────────────────────────────────────────────────────────────
+
+.badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+}
+
+// ─── Bubble ───────────────────────────────────────────────────────────────────
+
+.bubble {
+  @include surface-card($radius-2xl);
+  padding: $spacing-6;
+  color: $color-on-surface;
+  line-height: 1.65;
+}
+
+// Child mode: larger text, purple left border
+.childBubble {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-left: 4px solid $color-on-secondary-container;
+  border-radius: $radius-2xl;
+  padding: $spacing-8;
+
+  .text {
+    font-size: $font-size-md;
+  }
+}
+
+// ─── Text ─────────────────────────────────────────────────────────────────────
+
+.text {
+  font-size: $font-size-base;
+  color: $color-on-surface;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -1,0 +1,44 @@
+{
+  "Mumbai, India": {
+    "temperature": "32°C",
+    "feels_like": "36°C",
+    "summary": "Hot and humid with partial clouds",
+    "location": "Mumbai, India",
+    "advice": "Stay hydrated and carry an umbrella"
+  },
+  "Delhi, India": {
+    "temperature": "38°C",
+    "feels_like": "41°C",
+    "summary": "Extremely hot with hazy skies",
+    "location": "Delhi, India",
+    "advice": "Avoid going out between 12pm and 4pm"
+  },
+  "Bangalore": {
+    "temperature": "27°C",
+    "feels_like": "29°C",
+    "summary": "Warm with light clouds",
+    "location": "Bangalore",
+    "advice": "A light layer is enough for the evening"
+  },
+  "Mandi, Himachal Pradesh": {
+    "temperature": "19°C",
+    "feels_like": "17°C",
+    "summary": "Cool with scattered clouds",
+    "location": "Mandi, Himachal Pradesh",
+    "advice": "Carry a light jacket for the evening"
+  },
+  "London, UK": {
+    "temperature": "14°C",
+    "feels_like": "11°C",
+    "summary": "Overcast with light drizzle",
+    "location": "London, UK",
+    "advice": "Carry a waterproof jacket"
+  },
+  "default": {
+    "temperature": "25°C",
+    "feels_like": "25°C",
+    "summary": "Conditions unavailable for this location",
+    "location": "Unknown",
+    "advice": "Check a local weather source for accurate data"
+  }
+}

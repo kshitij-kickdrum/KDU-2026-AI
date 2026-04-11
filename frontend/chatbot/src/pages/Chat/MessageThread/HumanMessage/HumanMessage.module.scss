@@ -1,0 +1,25 @@
+@use '../../../../styles/abstracts/variables' as *;
+@use '../../../../styles/abstracts/mixins' as *;
+
+.wrapper {
+  @include flex-col;
+  align-items: flex-end;
+  gap: $spacing-2;
+}
+
+.name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  padding-right: $spacing-1;
+}
+
+.bubble {
+  max-width: 70%;
+  color: $color-on-surface;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  text-align: right;
+  // Transparent bubble — matches Stitch design
+  background: transparent;
+}

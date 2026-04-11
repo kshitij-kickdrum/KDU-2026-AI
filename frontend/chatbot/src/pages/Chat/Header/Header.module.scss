@@ -1,0 +1,118 @@
+@use '../../../styles/abstracts/variables' as *;
+@use '../../../styles/abstracts/mixins' as *;
+
+.header {
+  @include flex-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $header-height;
+  z-index: $z-header;
+  padding: 0 $spacing-6;
+  background-color: rgba(#0a0c12, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba($color-outline-variant, 0.15);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  min-width: 0;
+}
+
+.logoIcon {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-md;
+  background-color: $color-primary-container;
+  color: $color-on-primary-container;
+  flex-shrink: 0;
+}
+
+.appName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-extrabold;
+  letter-spacing: -0.04em;
+  color: #f8fafc;
+}
+
+.userPill {
+  display: flex;
+  align-items: center;
+  padding: $spacing-1 $spacing-3;
+  background-color: $color-surface-container-low;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-outline-variant, 0.2);
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+.userPillText {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-on-surface-variant;
+  @include truncate;
+  max-width: 200px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.styleToggle {
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  padding: 3px;
+  background-color: $color-surface-container;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-outline-variant, 0.2);
+}
+
+.styleBtn {
+  padding: 5px $spacing-4;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  font-family: $font-family-base;
+  letter-spacing: -0.01em;
+  color: $color-on-surface-variant;
+  transition: color $transition-fast, background-color $transition-fast;
+
+  &:hover:not(.styleBtnActive) {
+    color: $color-primary;
+  }
+}
+
+.styleBtnActive {
+  background-color: $color-primary-container;
+  color: $color-on-primary-container;
+}
+
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: 8px $spacing-4;
+  border-radius: $radius-full;
+  border: 1px solid rgba($color-outline-variant, 0.18);
+  background-color: rgba($color-surface-container, 0.8);
+  color: $color-on-surface-variant;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  font-family: $font-family-base;
+  transition: color $transition-fast, border-color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    color: $color-on-surface;
+    border-color: rgba($color-primary, 0.3);
+    background-color: rgba($color-surface-container-high, 0.95);
+  }
+}

@@ -1,0 +1,175 @@
+@use '../../../styles/abstracts/variables' as *;
+@use '../../../styles/abstracts/mixins' as *;
+
+.wrapper {
+  @include flex-col;
+  gap: $spacing-3;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-4 $spacing-6 $spacing-6;
+  background: linear-gradient(to top, $color-surface 62%, transparent);
+}
+
+.fileError {
+  font-size: $font-size-xs;
+  color: $color-error;
+  padding: 0 $spacing-1;
+}
+
+.filePreview {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  max-width: 340px;
+  padding: $spacing-2;
+  background-color: $color-surface-container;
+  border: 1px solid rgba($color-outline-variant, 0.24);
+  border-radius: $radius-lg;
+}
+
+.previewImage {
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-md;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.fileMeta {
+  @include flex-col;
+  min-width: 0;
+  gap: 2px;
+}
+
+.fileLabel {
+  font-size: $font-size-xs;
+  color: $color-on-surface-variant;
+  @include label-uppercase;
+}
+
+.fileName {
+  font-size: $font-size-sm;
+  color: $color-on-surface;
+  @include truncate;
+}
+
+.removeFile {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-md;
+  color: $color-on-surface-variant;
+  flex-shrink: 0;
+  transition: color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    color: $color-error;
+    background-color: rgba($color-error, 0.08);
+  }
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-2;
+  background-color: $color-surface-container-high;
+  border-radius: $radius-xl;
+  border: 1px solid rgba($color-outline-variant, 0.1);
+  transition: border-color $transition-base;
+
+  &:focus-within {
+    border-color: rgba($color-primary, 0.35);
+  }
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.iconBtn {
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  color: $color-on-surface-variant;
+  flex-shrink: 0;
+  transition: color $transition-fast, background-color $transition-fast;
+
+  &:hover:not(:disabled) {
+    color: $color-primary;
+    background-color: rgba($color-primary, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.textInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: $color-on-surface;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  padding: $spacing-2 $spacing-3;
+
+  &::placeholder {
+    color: rgba($color-on-surface-variant, 0.45);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.sendBtn {
+  @include flex-center;
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+  color: $color-on-surface-variant;
+  background-color: $color-surface-container-highest;
+  transition: background-color $transition-fast, color $transition-fast, transform $transition-fast;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.sendBtnActive {
+  background-color: $color-primary-container;
+  color: $color-on-primary-container;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+
+  &:active {
+    transform: scale(0.93);
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($color-on-primary-container, 0.3);
+  border-top-color: $color-on-primary-container;
+  border-radius: $radius-full;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

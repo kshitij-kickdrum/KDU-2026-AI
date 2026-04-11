@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aether AI | Chat Session</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #33343b; border-radius: 10px; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "inverse-surface": "#e2e2eb",
+                        "on-background": "#e2e2eb",
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary": "#ffb783",
+                        "on-surface": "#e2e2eb",
+                        "on-primary-container": "#0d0096",
+                        "inverse-primary": "#494bd6",
+                        "primary": "#c0c1ff",
+                        "tertiary-fixed": "#ffdcc5",
+                        "surface-container-highest": "#33343b",
+                        "on-primary-fixed": "#07006c",
+                        "tertiary-container": "#d97721",
+                        "surface": "#111319",
+                        "surface-dim": "#111319",
+                        "surface-container-lowest": "#0c0e14",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#404178",
+                        "on-secondary-fixed": "#13144a",
+                        "on-surface-variant": "#c7c4d7",
+                        "secondary-container": "#42447b",
+                        "primary-fixed": "#e1e0ff",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "surface-container": "#1e1f26",
+                        "on-secondary-container": "#b2b3f2",
+                        "surface-bright": "#373940",
+                        "outline": "#908fa0",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#292a60",
+                        "surface-container-high": "#282a30",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "background": "#111319",
+                        "secondary": "#c0c1ff",
+                        "on-tertiary-fixed": "#301400",
+                        "primary-container": "#8083ff",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#33343b",
+                        "surface-tint": "#c0c1ff",
+                        "outline-variant": "#464554",
+                        "inverse-on-surface": "#2e3037",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "surface-container-low": "#191b22",
+                        "on-primary": "#1000a9",
+                        "on-tertiary": "#4f2500",
+                        "on-tertiary-container": "#452000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-slate-950/80 backdrop-blur-md fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-6">
+<h1 class="text-xl font-bold tracking-tighter text-slate-50">Aether AI</h1>
+<div class="hidden md:flex items-center gap-2 px-3 py-1 bg-surface-container-low rounded-full">
+<span class="text-xs font-medium text-on-surface-variant">Kshitij · Mumbai, India</span>
+</div>
+</div>
+<nav class="hidden md:flex gap-8 items-center h-full">
+<button class="text-indigo-400 border-b-2 border-indigo-400 pb-1 font-sans tracking-tight hover:text-indigo-300 transition-colors">Expert</button>
+<button class="text-slate-400 font-sans tracking-tight hover:text-indigo-300 transition-colors">Child</button>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-indigo-300 transition-colors">account_circle</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-indigo-300 transition-colors">settings</span>
+</div>
+</header>
+<!-- Error Toast -->
+<div class="fixed top-20 right-6 z-[60] bg-error-container text-on-error-container px-4 py-3 rounded-lg shadow-2xl flex items-center gap-3 max-w-sm animate-pulse">
+<span class="material-symbols-outlined text-sm">error</span>
+<span class="text-xs font-medium">Connection latency detected. Retrying stream...</span>
+</div>
+<div class="flex flex-1 pt-16 overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="bg-slate-900 fixed left-0 top-16 h-[calc(100vh-64px)] w-[240px] flex flex-col p-4 space-y-2">
+<div class="mb-4">
+<h2 class="text-lg font-semibold text-slate-100">Session History</h2>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest">The Obsidian Architect</p>
+</div>
+<button class="bg-primary-container text-on-primary-container py-2.5 rounded-lg font-bold text-sm mb-4 flex items-center justify-center gap-2 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-sm">chat</span> New Chat
+            </button>
+<div class="flex-1 overflow-y-auto space-y-1">
+<div class="p-2 text-slate-50 font-bold bg-slate-800/50 rounded-lg text-sm flex items-center gap-3">
+<span class="material-symbols-outlined text-indigo-400 text-sm">chat</span>
+<span class="truncate">Current Chat</span>
+</div>
+<div class="p-2 text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 rounded-lg text-sm flex items-center gap-3 transition-all">
+<span class="material-symbols-outlined text-sm">history</span>
+<span class="truncate">History</span>
+</div>
+<div class="p-2 text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 rounded-lg text-sm flex items-center gap-3 transition-all">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+<span class="truncate">Templates</span>
+</div>
+<div class="p-2 text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 rounded-lg text-sm flex items-center gap-3 transition-all">
+<span class="material-symbols-outlined text-sm">inventory_2</span>
+<span class="truncate">Archived</span>
+</div>
+</div>
+<div class="pt-4 space-y-4">
+<button class="w-full border border-error/30 text-error hover:bg-error/10 text-xs py-2 rounded-md transition-colors font-medium">Clear Session</button>
+<div class="text-[10px] text-slate-500 font-mono text-center">SESSION_ID: AX-772-B</div>
+<div class="flex flex-col gap-1 border-t border-slate-800 pt-4">
+<div class="flex items-center gap-2 text-slate-400 text-xs hover:text-slate-200 cursor-pointer">
+<span class="material-symbols-outlined text-sm">help</span> Help
+                    </div>
+<div class="flex items-center gap-2 text-slate-400 text-xs hover:text-slate-200 cursor-pointer">
+<span class="material-symbols-outlined text-sm">logout</span> Logout
+                    </div>
+</div>
+</div>
+</aside>
+<!-- Main Chat Area -->
+<main class="ml-[240px] mr-[320px] flex-1 flex flex-col bg-surface overflow-y-auto relative">
+<div class="flex-1 p-8 space-y-10 pb-32">
+<!-- Human Message -->
+<div class="flex flex-col items-end gap-2">
+<div class="max-w-[80%] text-indigo-400 text-sm font-semibold pr-2">Kshitij</div>
+<div class="max-w-[70%] bg-transparent text-on-surface leading-relaxed body-lg text-right">
+                        Hey Aether, can you analyze the current weather in Mumbai and explain it to my nephew? Also, tell me what you see in the photo I just uploaded.
+                    </div>
+</div>
+<!-- AI Expert Response (Standard) -->
+<div class="flex flex-col items-start gap-4">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-tighter">
+                            model: gpt-4o
+                        </div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-full text-[10px] font-bold uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[10px]" style="font-variation-settings: 'FILL' 1;">cloud</span> weather_tool
+                        </div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-primary-container/20 text-primary rounded-full text-[10px] font-bold uppercase tracking-tighter">
+                            Expert
+                        </div>
+</div>
+<div class="max-w-[85%] bg-surface-container-low p-6 rounded-2xl text-on-surface leading-relaxed body-lg">
+                        Processing meteorological data for Mumbai... The current atmospheric conditions indicate high humidity (84%) with a barometric pressure of 1008 hPa. A localized low-pressure system is forming over the Arabian Sea.
+                    </div>
+</div>
+<!-- Inline Weather Card -->
+<div class="ml-0 max-w-sm bg-surface-container rounded-2xl overflow-hidden shadow-xl">
+<div class="p-6 flex justify-between items-start">
+<div>
+<h3 class="text-2xl font-bold tracking-tight">Mumbai</h3>
+<p class="text-on-surface-variant text-sm">Scattered Clouds</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">cloud_queue</span>
+</div>
+<div class="px-6 pb-6 flex items-end gap-2">
+<span class="text-5xl font-extrabold tracking-tighter">31°</span>
+<span class="text-on-surface-variant mb-1 font-medium">Feels like 36°</span>
+</div>
+<div class="grid grid-cols-3 gap-px bg-outline-variant/10">
+<div class="bg-surface-container-high p-4 text-center">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Wind</p>
+<p class="text-sm font-semibold">12 km/h</p>
+</div>
+<div class="bg-surface-container-high p-4 text-center">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">UV</p>
+<p class="text-sm font-semibold">6 High</p>
+</div>
+<div class="bg-surface-container-high p-4 text-center">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Rain</p>
+<p class="text-sm font-semibold">15%</p>
+</div>
+</div>
+</div>
+<!-- AI Child Response (Specific Styling) -->
+<div class="flex flex-col items-start gap-4">
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-on-secondary-container/20 text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-tighter border border-on-secondary-container/30">
+                        Child Mode
+                    </div>
+<div class="max-w-[85%] bg-surface-container-low p-8 rounded-3xl text-on-surface leading-relaxed text-xl font-medium border-l-4 border-on-secondary-container">
+                        Hey there! 🌈 Mumbai is feeling like a big warm hug today! ☀️ The clouds are playing hide-and-seek and it might even sprinkle some magic water from the sky later! 🌧️ Don't forget your colorful umbrella! ☂️✨
+                    </div>
+</div>
+<!-- Typing Indicator -->
+<div class="flex items-center gap-2 bg-surface-container-low px-4 py-3 rounded-full w-fit">
+<div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+<div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+<div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+<span class="text-xs text-on-surface-variant ml-2 font-medium">Aether is calculating...</span>
+</div>
+</div>
+<!-- Input Bar -->
+<div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-surface via-surface to-transparent">
+<div class="max-w-4xl mx-auto bg-surface-container-high rounded-2xl flex items-center p-2 shadow-2xl border border-outline-variant/10 focus-within:border-primary/40 transition-all">
+<button class="p-3 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/50 px-4 py-3" placeholder="Type your command..." type="text"/>
+<button class="bg-primary-container text-on-primary-container p-3 rounded-xl hover:scale-95 transition-transform">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Image Analysis Right Panel -->
+<aside class="fixed right-0 top-16 h-[calc(100vh-64px)] w-[320px] bg-surface-container-low border-l border-outline-variant/10 flex flex-col">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="font-bold tracking-tight">Vision Insight</h3>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">close</span>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<div class="rounded-xl overflow-hidden aspect-square relative group">
+<img alt="Mumbai Marine Drive" class="w-full h-full object-cover" data-alt="Cinematic shot of Mumbai Marine Drive skyline at sunset with golden orange sky and city lights reflecting on the Arabian Sea" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApKRJUZ2ar3Ku7ciZr5EqTFGOChozQtL9TIxrHvAA3sMyiQ4M5BNmp-MgwTxh8F_GGfir7p9-L1jm_H7EChRKngVZZuDb8wSPRf9-geF1QoTv-RBuENJIAJQvP4laN-bb9fCk8jD-NWtE3VY49s8cgQ_GkbfEj-jhI49E1CrieGC-K_0ZA8hWn8Nvy9kNgKSFzgnvAUJ7QZjfAQ_ND_LZUdM0Y15t4tzWijPyH2vAh4XPeQt9BlVNVTVmIlzdAUe9NzChKWyBxiW0"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl">zoom_in</span>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-extrabold mb-1">Description</p>
+<p class="text-sm text-on-surface leading-relaxed">Large urban coastline with prominent Art Deco architecture and curved promenade. Atmospheric haze detected near horizon.</p>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-extrabold mb-2">Detected Objects</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface text-[10px] font-medium rounded-md">Skyline</span>
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface text-[10px] font-medium rounded-md">Ocean</span>
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface text-[10px] font-medium rounded-md">Cars</span>
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface text-[10px] font-medium rounded-md">Cloudscape</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container rounded-xl space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-xs text-on-surface-variant">Scene type</span>
+<span class="text-xs font-bold">Urban Landscape</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-xs text-on-surface-variant">Confidence</span>
+<span class="text-xs font-bold text-primary">98.4%</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-xs text-on-surface-variant">Geolocation</span>
+<span class="text-xs font-bold">18.94° N, 72.82° E</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface-container">
+<button class="w-full bg-surface-bright py-3 rounded-xl text-xs font-bold text-on-surface flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span> Save Analysis
+                </button>
+</div>
+</aside>
+</div>
+</body></html>

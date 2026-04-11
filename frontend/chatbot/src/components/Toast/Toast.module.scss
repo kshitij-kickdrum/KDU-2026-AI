@@ -1,0 +1,77 @@
+@use '../../styles/abstracts/variables' as *;
+@use '../../styles/abstracts/mixins' as *;
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-3 $spacing-4;
+  border-radius: $radius-lg;
+  max-width: 360px;
+  width: 100%;
+  animation: slideIn $transition-base forwards;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+// ─── Variants ─────────────────────────────────────────────────────────────────
+
+.error {
+  background-color: $color-error-container;
+  color: $color-on-error-container;
+
+  .icon { color: $color-error; }
+}
+
+.warning {
+  background-color: $color-tertiary-container;
+  color: $color-on-tertiary-container;
+
+  .icon { color: $color-tertiary-fixed-dim; }
+}
+
+.success {
+  background-color: $color-secondary-container;
+  color: $color-on-secondary-container;
+
+  .icon { color: $color-secondary; }
+}
+
+// ─── Inner ────────────────────────────────────────────────────────────────────
+
+.icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.message {
+  flex: 1;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.closeBtn {
+  @include flex-center;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// ─── Animation ────────────────────────────────────────────────────────────────
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

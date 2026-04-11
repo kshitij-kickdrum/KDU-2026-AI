@@ -1,0 +1,93 @@
+@use '../../styles/abstracts/variables' as *;
+@use '../../styles/abstracts/mixins' as *;
+
+.card {
+  background-color: $color-surface-container;
+  border-radius: $radius-2xl;
+  border: 1px solid rgba($color-outline-variant, 0.15);
+  overflow: hidden;
+  min-width: 260px;
+  max-width: 340px;
+}
+
+// Child mode: slightly warmer tint on the card
+.childCard {
+  border-color: rgba($color-on-secondary-container, 0.25);
+  background-color: rgba($color-secondary-container, 0.15);
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  @include flex-between;
+  padding: $spacing-6 $spacing-6 $spacing-3;
+}
+
+.location {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.03em;
+  color: $color-on-surface;
+  margin: 0;
+}
+
+.summary {
+  font-size: $font-size-sm;
+  color: $color-on-surface-variant;
+  margin: $spacing-1 0 0;
+}
+
+.emojiIcon {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-left: $spacing-4;
+}
+
+// ─── Temperature ─────────────────────────────────────────────────────────────
+
+.tempRow {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-3;
+  padding: 0 $spacing-6 $spacing-6;
+}
+
+.temperature {
+  font-size: 48px;
+  font-weight: $font-weight-extrabold;
+  letter-spacing: -0.04em;
+  color: $color-on-surface;
+  line-height: 1;
+}
+
+.feelsLike {
+  font-size: $font-size-sm;
+  color: $color-on-surface-variant;
+  font-weight: $font-weight-medium;
+  padding-bottom: 6px;
+}
+
+// ─── Advice ───────────────────────────────────────────────────────────────────
+
+.advice {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-2;
+  padding: $spacing-3 $spacing-6 $spacing-5;
+  border-top: 1px solid rgba($color-outline-variant, 0.1);
+  background-color: rgba($color-surface-container-high, 0.5);
+}
+
+.adviceIcon {
+  font-size: $font-size-base;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.adviceText {
+  font-size: $font-size-sm;
+  color: $color-on-surface-variant;
+  line-height: 1.5;
+  margin: 0;
+}

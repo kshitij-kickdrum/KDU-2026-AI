@@ -1,0 +1,135 @@
+{
+  "u_001": {
+    "user_id": "u_001",
+    "name": "Riya",
+    "location": "Mumbai, India",
+    "timezone": "Asia/Kolkata",
+    "preferred_style": "expert"
+  },
+  "u_002": {
+    "user_id": "u_002",
+    "name": "Arjun",
+    "location": "Delhi, India",
+    "timezone": "Asia/Kolkata",
+    "preferred_style": "child"
+  },
+  "u_003": {
+    "user_id": "u_003",
+    "name": "Sara",
+    "location": "London, UK",
+    "timezone": "Europe/London",
+    "preferred_style": "expert"
+  },
+  "u_c85ed779": {
+    "user_id": "u_c85ed779",
+    "name": "Test User",
+    "location": "Delhi",
+    "age": 25,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_193308f6": {
+    "user_id": "u_193308f6",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 22,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_234f7f0a": {
+    "user_id": "u_234f7f0a",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_34c9741f": {
+    "user_id": "u_34c9741f",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_030a4e5b": {
+    "user_id": "u_030a4e5b",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_dc318288": {
+    "user_id": "u_dc318288",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_38d25979": {
+    "user_id": "u_38d25979",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_f4a1a7e0": {
+    "user_id": "u_f4a1a7e0",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_c7c3609d": {
+    "user_id": "u_c7c3609d",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_6418dea6": {
+    "user_id": "u_6418dea6",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_2f651982": {
+    "user_id": "u_2f651982",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_fdaadc04": {
+    "user_id": "u_fdaadc04",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_9e6d1ae9": {
+    "user_id": "u_9e6d1ae9",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  },
+  "u_328530db": {
+    "user_id": "u_328530db",
+    "name": "Kshitij",
+    "location": "Bangalore",
+    "age": 26,
+    "timezone": null,
+    "preferred_style": "expert"
+  }
+}

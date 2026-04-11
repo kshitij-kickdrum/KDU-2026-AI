@@ -1,0 +1,32 @@
+@use '../abstracts/variables' as *;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  color: $color-on-surface;
+}
+
+h1 { font-size: $font-size-2xl; }
+h2 { font-size: $font-size-xl; }
+h3 { font-size: $font-size-lg; }
+
+p {
+  font-size: $font-size-base;
+  color: $color-on-surface;
+  line-height: 1.6;
+}
+
+.text-muted {
+  color: $color-on-surface-variant;
+}
+
+.text-xs   { font-size: $font-size-xs; }
+.text-sm   { font-size: $font-size-sm; }
+.text-base { font-size: $font-size-base; }
+.text-lg   { font-size: $font-size-lg; }
+
+.font-medium   { font-weight: $font-weight-medium; }
+.font-semibold { font-weight: $font-weight-semibold; }
+.font-bold     { font-weight: $font-weight-bold; }

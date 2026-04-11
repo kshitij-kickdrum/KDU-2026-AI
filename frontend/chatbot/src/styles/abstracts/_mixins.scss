@@ -1,0 +1,92 @@
+@use 'variables' as *;
+
+// ─── Layout ──────────────────────────────────────────────────────────────────
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+// ─── Text ────────────────────────────────────────────────────────────────────
+
+@mixin truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin label-uppercase {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-extrabold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-on-surface-variant;
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+
+@mixin respond-to($bp) {
+  @if $bp == sm {
+    @media (max-width: #{$bp-sm}) { @content; }
+  } @else if $bp == md {
+    @media (max-width: #{$bp-md}) { @content; }
+  } @else if $bp == lg {
+    @media (max-width: #{$bp-lg}) { @content; }
+  } @else if $bp == xl {
+    @media (max-width: #{$bp-xl}) { @content; }
+  }
+}
+
+// ─── Scrollbar ───────────────────────────────────────────────────────────────
+
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $color-surface-container-highest;
+    border-radius: $radius-full;
+  }
+}
+
+// ─── Focus Ring ──────────────────────────────────────────────────────────────
+
+@mixin focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba($color-primary, 0.4);
+}
+
+// ─── Surface Card ────────────────────────────────────────────────────────────
+
+@mixin surface-card($radius: $radius-xl) {
+  background: $color-surface-container-low;
+  border-radius: $radius;
+  border: 1px solid rgba($color-outline-variant, 0.1);
+}
+
+// ─── Ambient Glow ────────────────────────────────────────────────────────────
+
+@mixin ambient-glow($color: $color-primary, $opacity: 0.05) {
+  position: fixed;
+  width: 384px;
+  height: 384px;
+  background: rgba($color, $opacity);
+  filter: blur(120px);
+  border-radius: $radius-full;
+  pointer-events: none;
+}

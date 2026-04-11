@@ -1,0 +1,17 @@
+@use '../../styles/abstracts/variables' as *;
+
+.container {
+  position: fixed;
+  top: calc(#{$header-height} + 16px);
+  right: 24px;
+  z-index: $z-toast;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+
+  // Individual toasts need pointer events
+  > * {
+    pointer-events: auto;
+  }
+}

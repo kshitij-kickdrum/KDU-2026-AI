@@ -1,0 +1,11 @@
+@use '../../../styles/abstracts/variables' as *;
+@use '../../../styles/abstracts/mixins' as *;
+
+.thread {
+  @include flex-col;
+  @include custom-scrollbar;
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-8 $spacing-8 160px; // 160px bottom clearance for InputBar
+  gap: $spacing-10;
+}

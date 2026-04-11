@@ -1,0 +1,11 @@
+// ─── Abstracts (no output — variables, mixins, functions) ────────────────────
+@use 'abstracts/variables' as *;
+@use 'abstracts/mixins' as *;
+@use 'abstracts/functions' as *;
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
+@use 'base/reset';
+@use 'base/typography';
+
+// ─── Utilities ───────────────────────────────────────────────────────────────
+@use 'utilities/spacing';

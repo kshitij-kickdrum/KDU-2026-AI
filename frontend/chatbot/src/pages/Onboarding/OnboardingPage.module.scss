@@ -1,0 +1,218 @@
+@use '../../styles/abstracts/variables' as *;
+@use '../../styles/abstracts/mixins' as *;
+
+.page {
+  @include flex-center;
+  min-height: 100vh;
+  background-color: $color-background;
+  padding: $spacing-6;
+  position: relative;
+  overflow: hidden;
+}
+
+// ─── Ambient Glows ────────────────────────────────────────────────────────────
+
+.glow {
+  @include ambient-glow($color-primary, 0.06);
+  position: fixed;
+}
+
+.glowBottomLeft {
+  bottom: -128px;
+  left: -128px;
+}
+
+.glowTopRight {
+  top: -128px;
+  right: -128px;
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+.card {
+  @include flex-col;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  padding: $spacing-12 $spacing-6;
+  position: relative;
+  z-index: 1;
+}
+
+// ─── Logo ─────────────────────────────────────────────────────────────────────
+
+.logoSection {
+  @include flex-col;
+  align-items: center;
+  margin-bottom: $spacing-10;
+  text-align: center;
+}
+
+.logoIcon {
+  @include flex-center;
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-lg;
+  background-color: $color-primary-container;
+  color: $color-on-primary-container;
+  margin-bottom: $spacing-4;
+}
+
+.appName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-extrabold;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: #f8fafc;
+}
+
+.appSubtitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-on-surface-variant;
+  margin-top: $spacing-2;
+  letter-spacing: -0.02em;
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+
+.form {
+  @include flex-col;
+  gap: $spacing-5;
+  width: 100%;
+  background-color: $color-surface-container-low;
+  padding: $spacing-8;
+  border-radius: $radius-xl;
+  border: 1px solid rgba($color-outline-variant, 0.15);
+}
+
+// ─── Field ────────────────────────────────────────────────────────────────────
+
+.fieldGroup {
+  @include flex-col;
+  gap: $spacing-2;
+}
+
+.label {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-extrabold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-on-surface-variant;
+}
+
+.input {
+  width: 100%;
+  background-color: $color-surface-container-high;
+  color: $color-on-surface;
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+  padding: 12px $spacing-4;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  transition: border-color $transition-base, box-shadow $transition-base;
+
+  &::placeholder {
+    color: rgba($color-on-surface-variant, 0.4);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba($color-primary, 0.4);
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.08);
+  }
+
+  // Remove number input arrows
+  &[type='number'] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+  }
+}
+
+.inputError {
+  border-color: rgba($color-error, 0.5);
+
+  &:focus {
+    border-color: rgba($color-error, 0.7);
+    box-shadow: 0 0 0 3px rgba($color-error, 0.08);
+  }
+}
+
+.errorText {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-error;
+  margin-top: 2px;
+}
+
+.hint {
+  font-size: $font-size-xs;
+  line-height: 1.5;
+  color: rgba($color-on-surface-variant, 0.6);
+  margin-top: 2px;
+}
+
+.apiError {
+  font-size: $font-size-sm;
+  color: $color-error;
+  text-align: center;
+  padding: $spacing-3 $spacing-4;
+  background-color: rgba($color-error-container, 0.2);
+  border-radius: $radius-md;
+}
+
+// ─── Submit Button ────────────────────────────────────────────────────────────
+
+.submitBtn {
+  @include flex-center;
+  gap: $spacing-2;
+  width: 100%;
+  padding: 14px $spacing-4;
+  margin-top: $spacing-2;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  font-family: $font-family-base;
+  letter-spacing: 0.02em;
+  color: $color-on-primary;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-container 100%);
+  transition: opacity $transition-base, transform $transition-fast;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Decorative Dots ─────────────────────────────────────────────────────────
+
+.decorDots {
+  display: flex;
+  gap: $spacing-4;
+  margin-top: $spacing-8;
+  opacity: 0.2;
+}
+
+.dot {
+  height: 4px;
+  width: 32px;
+  border-radius: $radius-full;
+  background-color: $color-outline-variant;
+}
+
+.dotActive {
+  width: 48px;
+  background-color: $color-primary;
+}
