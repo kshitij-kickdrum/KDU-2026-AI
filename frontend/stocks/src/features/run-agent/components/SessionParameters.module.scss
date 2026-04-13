@@ -1,0 +1,205 @@
+@use '../../../styles/abstracts/mixins';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0 0 0.5rem;
+}
+
+.sectionIcon {
+  color: var(--primary-container);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 5;
+}
+
+.label {
+  @include mixins.label-caps;
+  color: var(--primary-dim);
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  background: var(--surface-highest);
+  border: none;
+  outline: none;
+  padding: 1rem 2.5rem 1rem 1rem;
+  border-radius: 2px;
+  color: var(--on-surface);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9375rem;
+  appearance: none;
+  cursor: pointer;
+
+  &:focus {
+    box-shadow: 0 0 0 1px var(--primary-container);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  option {
+    background: var(--surface);
+  }
+}
+
+.selectIcon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--outline);
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.875rem;
+  color: var(--outline);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.input {
+  width: 100%;
+  background: var(--surface-highest);
+  border: none;
+  outline: none;
+  padding: 1rem 8rem 1rem 2.5rem;
+  border-radius: 2px;
+  color: var(--on-surface);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9375rem;
+
+  &::placeholder {
+    color: var(--outline);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1px var(--primary-container);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.priceIndicator {
+  position: absolute;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  pointer-events: none;
+}
+
+.priceLabel {
+  @include mixins.label-caps;
+  color: var(--secondary-fixed);
+  font-size: 0.625rem;
+}
+
+.spinner {
+  position: absolute;
+  right: 1rem;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(71, 214, 255, 0.2);
+  border-top-color: var(--primary-dim);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Dropdown
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--surface-high);
+  border: 1px solid rgba(60, 73, 78, 0.4);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 2000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--surface-highest);
+  }
+}
+
+.dropdownSymbol {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--primary-dim);
+  min-width: 60px;
+}
+
+.dropdownDesc {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownPrice {
+  margin-left: auto;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--tertiary);
+}

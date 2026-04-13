@@ -1,0 +1,83 @@
+# -----------------------------
+# OS / Editor
+# -----------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.bak
+.vscode/
+.idea/
+
+# -----------------------------
+# Root Python env/cache
+# -----------------------------
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# -----------------------------
+# Backend (Python/FastAPI)
+# -----------------------------
+backend/.venv/
+backend/__pycache__/
+backend/**/*.py[cod]
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.coverage
+backend/.coverage.*
+backend/htmlcov/
+backend/.hypothesis/
+backend/.tox/
+backend/.nox/
+
+# Environment files
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Runtime data / logs
+backend/*.log
+backend/logs/
+backend/data/*.db
+backend/data/*.sqlite
+backend/data/*.sqlite3
+
+# Build / packaging
+backend/build/
+backend/dist/
+backend/*.egg-info/
+
+# -----------------------------
+# Frontend (Node/Vite/React)
+# -----------------------------
+frontend/**/node_modules/
+frontend/**/.pnpm-store/
+frontend/**/.npm/
+frontend/**/.yarn/
+frontend/**/dist/
+frontend/**/build/
+frontend/**/.vite/
+frontend/**/coverage/
+frontend/**/.eslintcache
+frontend/**/npm-debug.log*
+frontend/**/yarn-debug.log*
+frontend/**/yarn-error.log*
+frontend/**/pnpm-debug.log*
+
+# Frontend env files
+frontend/**/.env
+frontend/**/.env.*
+!frontend/**/.env.example
+
+# -----------------------------
+# Misc
+# -----------------------------
+*.pid
+*.seed
+*.out
+*.err

@@ -1,0 +1,42 @@
+.root {
+  min-height: 100vh;
+  background-color: var(--bg);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.main {
+  margin-left: var(--sidebar-width);
+  padding-top: var(--topnav-height);
+  min-height: 100vh;
+
+  @media (max-width: 1024px) {
+    margin-left: 0;
+  }
+}
+
+.glowLeft {
+  position: fixed;
+  top: 20%;
+  left: -10%;
+  width: 40%;
+  height: 40%;
+  background: rgba(0, 210, 255, 0.04);
+  filter: blur(120px);
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.glowRight {
+  position: fixed;
+  bottom: -10%;
+  right: -5%;
+  width: 30%;
+  height: 30%;
+  background: rgba(0, 253, 155, 0.04);
+  filter: blur(120px);
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 0;
+}

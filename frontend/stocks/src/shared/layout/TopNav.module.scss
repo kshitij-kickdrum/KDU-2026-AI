@@ -1,0 +1,71 @@
+@use '../../styles/abstracts/variables';
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: var(--topnav-height);
+  background: rgba(15, 19, 28, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 0 40px rgba(71, 214, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--primary-dim);
+  font-family: 'Inter', sans-serif;
+}
+
+.links {
+  display: flex;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  color: var(--on-surface-variant);
+  padding: 0.25rem 0;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--on-surface);
+  }
+}
+
+.active {
+  color: var(--primary-dim);
+  border-bottom: 2px solid var(--primary-dim);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+}
+
+.iconBtn {
+  color: var(--primary-dim) !important;
+}

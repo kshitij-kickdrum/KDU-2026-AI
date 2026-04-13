@@ -1,0 +1,25 @@
+// Stitch design tokens
+:root {
+  --bg:                  #0f131c;
+  --surface:             #1c1f29;
+  --surface-low:         #181b25;
+  --surface-high:        #262a34;
+  --surface-highest:     #31353f;
+
+  --primary:             #a5e7ff;
+  --primary-container:   #00d2ff;
+  --primary-dim:         #47d6ff;
+
+  --tertiary:            #00fd9b;
+  --tertiary-container:  #00dd87;
+
+  --error:               #ffb4ab;
+
+  --on-surface:          #dfe2ef;
+  --on-surface-variant:  #bbc9cf;
+  --outline:             #859399;
+  --outline-variant:     #3c494e;
+
+  --sidebar-width:       256px;
+  --topnav-height:       80px;
+}
