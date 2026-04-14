@@ -1,0 +1,125 @@
+@use '../../styles/abstracts/mixins';
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: #020509;
+  border-right: 1px solid rgba(60, 73, 78, 0.15);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 0;
+  padding-top: calc(var(--topnav-height) + 2rem);
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.5rem 2rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-highest);
+  border: 1px solid rgba(71, 214, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-dim);
+  flex-shrink: 0;
+}
+
+.name {
+  @include mixins.label-caps;
+  color: var(--on-surface);
+}
+
+.role {
+  @include mixins.label-caps;
+  font-size: 0.5625rem;
+  color: var(--outline);
+  margin-top: 2px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 0.5rem;
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  border-radius: 2px;
+  color: var(--outline);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--on-surface-variant);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.navItemActive {
+  color: var(--primary-dim);
+  background: rgba(71, 214, 255, 0.08);
+  border-right: 3px solid var(--primary-dim);
+}
+
+.footer {
+  padding: 0 1rem;
+  margin-top: auto;
+}
+
+.newTradeBtn {
+  width: 100%;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, #00d2ff, #00f1fd);
+  color: #003543;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.15s;
+
+  &:hover {
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}

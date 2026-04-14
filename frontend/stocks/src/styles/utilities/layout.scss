@@ -1,0 +1,9 @@
+.page-content {
+  margin-left: var(--sidebar-width);
+  padding-top: var(--topnav-height);
+  min-height: 100vh;
+
+  @media (max-width: 1024px) {
+    margin-left: 0;
+  }
+}
