@@ -12,3 +12,4 @@ Each assessment is developed on its own branch (e.g. `AI-5`, `AI-6`) and merged 
 | `AI-5` | FastAPI Production Template |
 | `AI-6` | Multimodal AI Assistant |
 | `AI-7` | Stock Trading Agent & Agent Meets Analytics |
+| `AI-8` | Hybrid Search RAG Chatbot |
