@@ -1,0 +1,51 @@
+system:
+  environment: development
+  debug: true
+  debug_mode: false
+  log_level: INFO
+  local_only_mode: true
+
+document_processing:
+  max_file_size_mb: 50
+  timeout_seconds: 30
+  allowed_domains:
+    - wikipedia.org
+    - medium.com
+    - github.io
+    - docs.python.org
+    - geeksforgeeks.org
+
+chunking:
+  default_chunk_size: 450
+  chunk_overlap: 60
+  min_chunk_size: 100
+  max_chunk_size: 600
+  semantic_refinement_threshold: 600
+  enable_parent_child: false
+
+embeddings:
+  model_name: all-MiniLM-L6-v2
+  batch_size: 32
+
+search:
+  semantic_weight: 0.6
+  keyword_weight: 0.4
+  max_results: 20
+  min_relevance_threshold: 0.3
+  rrf_k: 60
+
+llm:
+  provider: openrouter
+  model: openai/gpt-4o-mini
+  fallback_model: null
+  base_url: https://openrouter.ai/api/v1
+  temperature: 0.1
+  max_tokens: 800
+  timeout_seconds: 30
+
+security:
+  virustotal_enabled: false
+
+storage:
+  vector_db_path: data/vector_db
+  metadata_db_path: data/metadata.db
