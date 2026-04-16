@@ -17,76 +17,130 @@ The MCP Resume Shortlister is an AI-powered recruitment tool that leverages Mode
 - We are NOT implementing user authentication or multi-tenant capabilities in this version.
 - We are NOT providing resume editing or formatting capabilities.
 
+## Unique Selling Points (USPs)
+
+The MCP Resume Shortlister delivers 6 distinctive AI-powered capabilities that set it apart from traditional resume screening tools:
+
+### 1. **ATS Score Resume** (`ats_score_resume`)
+**Advanced Applicant Tracking System Simulation**
+- Provides comprehensive 0-100 scoring with weighted component analysis
+- Evaluates Skills Match, Experience Relevance, Project Relevance, Clarity & Structure, and ATS Formatting Risk
+- Delivers actionable recommendations with evidence-based scoring rationale
+- Simulates real ATS behavior to predict resume success rates
+
+### 2. **Keyword Stuffing Detection** (`detect_keyword_stuffing`)
+**Intelligent Resume Quality Assessment**
+- Detects artificial keyword inflation and low-evidence buzzword repetition
+- Analyzes keyword balance, context quality, and evidence strength
+- Prevents gaming of ATS systems by identifying inauthentic optimization
+- Ensures resume authenticity and genuine skill representation
+
+### 3. **Project Quality Evaluation** (`evaluate_project_quality`)
+**Deep Project Impact Analysis**
+- Scores projects on Impact, Ownership, Complexity, and Outcome Clarity
+- Evaluates real-world contribution and technical depth
+- Identifies high-impact candidates through project assessment
+- Provides insights into candidate's actual hands-on experience
+
+### 4. **Resume Red Flags Detection** (`detect_resume_red_flags`)
+**Comprehensive Risk Assessment**
+- Automatically identifies employment gaps, inconsistencies, and vague claims
+- Ranks findings by severity (low/medium/high) and confidence levels
+- Detects potential misrepresentations and questionable statements
+- Streamlines initial screening by flagging problematic resumes
+
+### 5. **Duplicate Candidate Detection** (`detect_duplicate_candidate`)
+**Advanced Similarity Analysis**
+- Uses semantic embeddings to detect near-duplicate resumes across the entire candidate pool
+- Prevents duplicate applications and identifies potential fraud
+- Provides similarity scores with configurable thresholds
+- Maintains candidate database integrity and reduces processing overhead
+
+### 6. **Personalized Interview Questions** (`generate_interview_questions`)
+**AI-Driven Interview Preparation**
+- Generates both technical and behavioral questions tailored to each candidate
+- Analyzes resume content and job requirements to create relevant questions
+- Provides reasoning for each question to guide interviewer preparation
+- Customizable question count (4-20) based on interview depth requirements
+
+**Competitive Advantage**: These USPs combine to create a comprehensive, AI-powered recruitment pipeline that goes beyond simple keyword matching to provide deep, contextual analysis of candidate quality and fit.
+
 ## 2. System Architecture & Flow
 
 ### Component Diagram
 
+```mermaid
+flowchart TD
+    CD[Claude Desktop MCP Client]
+    
+    subgraph servers [MCP Servers]
+        BM[Basic Resume MCP]
+        EM[Enhanced Resume MCP]
+    end
+    
+    subgraph utils [Utility Layer]
+        RU[Resume Utils]
+        LU[LangChain Utils]
+    end
+    
+    subgraph external [External Services]
+        OR[OpenRouter API]
+        HF[HuggingFace Embeddings]
+    end
+    
+    CD -->|MCP Protocol| BM
+    CD -->|MCP Protocol| EM
+    BM --> RU
+    EM --> RU
+    EM --> LU
+    LU --> OR
+    LU --> HF
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Claude Desktop                           │
-│                     (MCP Client)                               │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │ MCP Protocol
-                      │
-┌─────────────────────▼───────────────────────────────────────────┐
-│                   MCP Servers                                   │
-│  ┌─────────────────────────┐  ┌─────────────────────────────────┐│
-│  │   Basic Resume MCP      │  │  Enhanced Resume MCP            ││
-│  │   - read_resume         │  │  - match_resume                 ││
-│  │   - list_resumes        │  │  - extract_skills               ││
-│  └─────────────────────────┘  │  - ats_score_resume             ││
-│                               │  - detect_keyword_stuffing      ││
-│                               │  - evaluate_project_quality     ││
-│                               │  - detect_resume_red_flags      ││
-│                               │  - detect_duplicate_candidate   ││
-│                               │  - generate_interview_questions ││
-│                               └─────────────────────────────────┘│
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────────────────────────┐
-│                 Utility Layer                                   │
-│  ┌─────────────────────────┐  ┌─────────────────────────────────┐│
-│  │   Resume Utils          │  │  LangChain Utils                ││
-│  │   - read_resume()       │  │  - init_langchain_components()  ││
-│  │   - ensure_dir_exists() │  │  - prepare_resume_documents()   ││
-│  └─────────────────────────┘  │  - find_relevant_sections()     ││
-│                               │  - extract_skills_with_langchain││
-│                               │  - assess_resume_for_job()      ││
-│                               │  - Various scoring functions    ││
-│                               └─────────────────────────────────┘│
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-┌─────────────────────▼───────────────────────────────────────────┐
-│                External Services                                │
-│  ┌─────────────────────────┐  ┌─────────────────────────────────┐│
-│  │   OpenRouter API        │  │  Hugging Face Embeddings        ││
-│  │   - GPT-4o-mini         │  │  - all-MiniLM-L6-v2             ││
-│  │   - Chat completions    │  │  - Semantic similarity          ││
-│  └─────────────────────────┘  └─────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────┘
-```
+
+**Component Details:**
+- **Claude Desktop**: MCP client interface
+- **Basic Resume MCP**: read_resume, list_resumes
+- **Enhanced Resume MCP**: match_resume, extract_skills, ats_score_resume, detect_keyword_stuffing, evaluate_project_quality, detect_resume_red_flags, detect_duplicate_candidate, generate_interview_questions
+- **Resume Utils**: read_resume(), ensure_dir_exists()
+- **LangChain Utils**: init_langchain_components(), prepare_resume_documents(), find_relevant_sections(), extract_skills_with_langchain, assess_resume_for_job(), various scoring functions
+- **OpenRouter API**: GPT-4o-mini, chat completions
+- **HuggingFace Embeddings**: all-MiniLM-L6-v2, semantic similarity
 
 ### Sequence Diagram: Resume-Job Matching Flow
 
-```
-Claude Desktop -> Enhanced MCP: match_resume(file_path, job_description)
-Enhanced MCP -> Resume Utils: read_resume(file_path)
-Resume Utils -> PyMuPDF: Extract text from PDF
-PyMuPDF -> Resume Utils: Raw resume text
-Resume Utils -> Enhanced MCP: Resume text content
-Enhanced MCP -> LangChain Utils: prepare_resume_documents(text)
-LangChain Utils -> Enhanced MCP: Chunked documents
-Enhanced MCP -> LangChain Utils: find_relevant_sections(docs, job_desc, embeddings)
-LangChain Utils -> HuggingFace: Generate embeddings
-HuggingFace -> LangChain Utils: Vector embeddings
-LangChain Utils -> FAISS: Similarity search
-FAISS -> LangChain Utils: Top 3 relevant sections
-LangChain Utils -> Enhanced MCP: Relevant sections with scores
-Enhanced MCP -> LangChain Utils: assess_resume_for_job(text, job_desc, llm)
-LangChain Utils -> OpenRouter API: LLM assessment request
-OpenRouter API -> LangChain Utils: Assessment response
-LangChain Utils -> Enhanced MCP: Formatted assessment
-Enhanced MCP -> Claude Desktop: Complete match analysis
+```mermaid
+sequenceDiagram
+    participant CD as Claude Desktop
+    participant EM as Enhanced MCP
+    participant RU as Resume Utils
+    participant PDF as PyMuPDF
+    participant LU as LangChain Utils
+    participant HF as HuggingFace
+    participant FAISS as FAISS
+    participant OR as OpenRouter API
+
+    CD->>EM: match_resume(file_path, job_description)
+    EM->>RU: read_resume(file_path)
+    RU->>PDF: Extract text from PDF
+    PDF->>RU: Raw resume text
+    RU->>EM: Resume text content
+    
+    EM->>LU: prepare_resume_documents(text)
+    LU->>EM: Chunked documents
+    
+    EM->>LU: find_relevant_sections(docs, job_desc, embeddings)
+    LU->>HF: Generate embeddings
+    HF->>LU: Vector embeddings
+    LU->>FAISS: Similarity search
+    FAISS->>LU: Top 3 relevant sections
+    LU->>EM: Relevant sections with scores
+    
+    EM->>LU: assess_resume_for_job(text, job_desc, llm)
+    LU->>OR: LLM assessment request
+    OR->>LU: Assessment response
+    LU->>EM: Formatted assessment
+    
+    EM->>CD: Complete match analysis
 ```
 
 ## 3. The Technical "Source of Truth"
