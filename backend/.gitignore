@@ -1,0 +1,6 @@
+.env
+.pytest_cache/
+tests/.tmp/
+data/costs.db
+__pycache__/
+*.pyc

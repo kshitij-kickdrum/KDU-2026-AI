@@ -1,0 +1,18 @@
+registry:
+  faq:
+    active_version: v1
+    available_versions:
+    - v1
+    - v2
+  complaint:
+    active_version: v1
+    available_versions:
+    - v1
+  booking:
+    active_version: v1
+    available_versions:
+    - v1
+  classifier:
+    active_version: v1
+    available_versions:
+    - v1

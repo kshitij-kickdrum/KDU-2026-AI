@@ -1,0 +1,15 @@
+app:
+  name: fixit-ai-support-system
+  environment: development
+  log_level: INFO
+  database_path: data/costs.db
+
+features:
+  enable_llm_classification_fallback: false
+  enable_cost_tracking: true
+  enable_budget_enforcement: true
+  enable_response_cache: true
+  enable_pre_summarization: false
+
+limits:
+  rate_limit_requests_per_minute: 100
