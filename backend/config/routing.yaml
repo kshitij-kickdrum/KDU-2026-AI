@@ -1,0 +1,16 @@
+routing:
+  faq:
+    low: gpt-4o-mini
+    medium: gpt-4o-mini
+    high: gpt-4o-mini
+  complaint:
+    low: gpt-4o-mini
+    medium: gpt-4o-mini
+    high: gpt-4o-mini
+  booking:
+    low: gpt-4o-mini
+    medium: gpt-4o-mini
+    high: gpt-4o-mini
+
+fallback:
+  cheapest_model: gpt-4o-mini

@@ -1,0 +1,18 @@
+﻿@mixin respond($breakpoint) {
+  @if $breakpoint == sm {
+    @media (max-width: 600px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == md {
+    @media (max-width: 900px) {
+      @content;
+    }
+  }
+}
+
+@mixin focus-ring {
+  outline: 2px solid #0c4a6e;
+  outline-offset: 2px;
+}

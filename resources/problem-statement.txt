@@ -1,0 +1,144 @@
+﻿🧠 Hands-on Exercise: LLMOps for FixIt AI Support System
+🎯 Objective
+Design and build a cost-efficient, production-ready LLM system using LLMOps principles, focusing on routing, configuration, prompt management, and evaluation.
+________________
+
+
+🧩 Problem Statement
+You are working with FixIt, a home services marketplace handling customer queries for plumbing, electrical, and cleaning services.
+Business Constraints
+* 10,000 queries/day
+
+* Budget: $500/month
+
+* Target satisfaction: >85%
+
+* Current system uses expensive models → $3000/month
+
+Your task is to redesign the system to:
+   * Reduce cost
+
+   * Maintain quality
+
+   * Ensure production readiness
+
+________________
+
+
+📊 Sample Data
+You are provided with labeled queries:
+query, category, complexity, expected_response_type
+"What are your hours?", FAQ, low, simple
+"My plumber didn't show up, need refund", complaint, high, complex
+"Can I reschedule my cleaning appointment?", booking, medium, standard
+
+________________
+⚙️ Task
+Part 1: Configuration-Driven Architecture
+Goal
+Build a system where behavior is fully configurable
+Task
+      * Define configuration for:
+
+         * Model selection
+
+         * Routing rules
+
+         * Prompt templates
+
+         * Cost limits
+
+         * Feature flags
+
+            * Store configuration externally
+
+            * Ensure configuration can be updated without code changes
+
+________________
+
+
+Part 2: Intelligent Query Router
+Goal
+Route queries to appropriate models based on complexity and cost
+Task
+               * Classify incoming queries
+
+               * Route to different models based on classification
+
+               * Track cost and enforce budget constraints
+
+               * Handle edge cases and fallback scenarios
+
+________________
+
+
+Part 3: Prompt Management & Versioning
+Goal
+Manage prompts as versioned, configurable assets
+Task
+                  * Store prompts externally
+
+                  * Implement versioning for prompts
+
+                  * Track metadata (performance, usage, etc.)
+
+                  * Load prompts dynamically into the system
+
+________________
+
+
+Part 4: Testing Framework
+Goal
+Ensure reliability and correctness of the system
+Task
+                     * Design and implement tests for:
+
+                        * Query classification
+
+                        * Configuration loading
+
+                        * Prompt handling
+
+                        * Cost calculation
+
+________________
+
+
+🧪 Expectations
+Your system should demonstrate:
+                           * Config-driven architecture
+
+                           * Intelligent routing decisions
+
+                           * Cost optimization under constraints
+
+                           * Prompt versioning and management
+
+                           * Reliable testing setup
+
+________________
+
+
+📦 Deliverable
+Code
+                              * Configuration system
+
+                              * Query routing system
+
+                              * Prompt management system
+
+                              * Test suite
+
+________________
+
+
+Documentation
+                                 * Architecture diagram
+
+                                 * Configuration design
+
+                                 * Routing logic explanation
+
+                                 * Testing strategy
+
+                                 * Cost analysis (before vs after optimization)

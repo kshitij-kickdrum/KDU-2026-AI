@@ -1,0 +1,11 @@
+﻿@use "../abstracts/variables" as *;
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #f8fafc, #eef6fb 45%, #fdf5ea);
+  color: $color-text;
+}
+
+a {
+  color: inherit;
+}

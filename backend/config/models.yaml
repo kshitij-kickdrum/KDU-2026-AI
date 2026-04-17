@@ -1,0 +1,15 @@
+models:
+  gemini-flash-lite:
+    provider: gemini
+    model_name: gemini-2.0-flash-lite
+    input_cost_per_1k_tokens: 0.000075
+    output_cost_per_1k_tokens: 0.0003
+    max_tokens: 1024
+    timeout_seconds: 30
+  gpt-4o-mini:
+    provider: openrouter
+    model_name: openai/gpt-4o-mini
+    input_cost_per_1k_tokens: 0.00015
+    output_cost_per_1k_tokens: 0.0006
+    max_tokens: 1024
+    timeout_seconds: 30

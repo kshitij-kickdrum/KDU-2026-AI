@@ -1,0 +1,8 @@
+template: |
+  Classify the user query into:
+  - category: faq | complaint | booking
+  - complexity: low | medium | high
+  Return strict JSON with keys "category" and "complexity".
+
+  Query:
+  {query}
