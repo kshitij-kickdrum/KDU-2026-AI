@@ -14,3 +14,4 @@ Each assessment is developed on its own branch (e.g. `AI-5`, `AI-6`) and merged 
 | `AI-7` | Stock Trading Agent & Agent Meets Analytics |
 | `AI-8` | Hybrid Search RAG Chatbot |
 | `AI-9` | MCP and Tool Integration |
+| `AI-10` | LLMOps for FixIt AI Support System |
