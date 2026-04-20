@@ -1,0 +1,57 @@
+# Project resources (local/reference material)
+resources/
+.kiro/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+backend/.hypothesis/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+backend/.venv/
+
+# Environment and secrets
+.env
+.env.*
+backend/.env
+
+# Logs and runtime artifacts
+*.log
+logs/
+tmp/
+temp/
+
+# Local data / databases / generated artifacts
+*.db
+*.sqlite
+*.sqlite3
+backend/data/
+backend/.tmp_pytest/
+backend/data/.pytest_cache/
+backend/data/pytest_tmp/
+backend/data/pytest-cache-files-*/
+backend/pytest-cache-files-*/
+pytest-cache-files-*/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
