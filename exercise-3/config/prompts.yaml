@@ -1,0 +1,52 @@
+﻿merge_prompt: |
+  You are a summarization assistant. Merge the section summaries into one coherent summary.
+
+  Requirements:
+  - Eliminate repetition
+  - Maintain logical flow
+  - Preserve key information
+
+  Summaries:
+  {chunk_summaries}
+
+  Merged summary:
+
+refine_prompt: |
+  You are a summarization assistant. Refine the summary for the requested length.
+
+  Requirements:
+  - Length type: {length_type}
+  - Target words: {target_words}
+  - Allowed range: {min_words}-{max_words}
+  - Preserve factual accuracy
+
+  Strategy:
+  {strategy_guidelines}
+
+  Base summary:
+  {base_summary}
+
+  Refined summary:
+
+qa_fallback_prompt: |
+  You are a question-answering assistant. Use only the provided context.
+
+  Rules:
+  - If answer not present, respond exactly: Not found in context.
+  - Do not use external knowledge.
+  - Keep answer concise and factual.
+
+  Context:
+  {summary}
+
+  Question: {question}
+
+  Answer:
+
+refinement_strategies:
+  short: |
+    Keep only core facts and outcomes. Remove examples and secondary details.
+  medium: |
+    Keep key points with essential context. Remove minor details and redundancy.
+  long: |
+    Keep all important points with context. Remove only obvious repetition.

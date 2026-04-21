@@ -1,0 +1,16 @@
+﻿fastapi==0.115.6
+uvicorn==0.34.0
+streamlit==1.44.0
+httpx==0.28.1
+pydantic>=2.11.0,<3
+PyYAML==6.0.2
+transformers==4.48.1
+torch==2.11.0
+langgraph==0.2.74
+python-multipart==0.0.20
+pytest==8.3.4
+pytest-mock==3.14.0
+pytest-cov==6.0.0
+black==24.10.0
+flake8==7.1.1
+isort==5.13.2
