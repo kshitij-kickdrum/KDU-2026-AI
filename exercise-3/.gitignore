@@ -1,0 +1,26 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS/IDE
+.vscode/
+.idea/
+.DS_Store
+
+# App artifacts
+logs/
+.cache/
+.streamlit/
+
+# Model cache (optional override)
+.huggingface/

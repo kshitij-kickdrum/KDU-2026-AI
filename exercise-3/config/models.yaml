@@ -1,0 +1,39 @@
+﻿bart:
+  model_name: "facebook/bart-large-cnn"
+  max_length: 150
+  min_length: 50
+  do_sample: false
+  device: "auto"
+
+qwen:
+  api_url: "http://localhost:1234/v1/chat/completions"
+  timeout: 180
+  max_retries: 3
+  temperature: 0.3
+  max_tokens: 512
+  top_p: 0.9
+  model_name: "qwen2.5-coder-7b-instruct"
+
+roberta:
+  model_name: "deepset/roberta-base-squad2"
+  max_seq_length: 512
+  confidence_threshold: 0.20
+  device: "auto"
+
+chunking:
+  max_tokens: 800
+  overlap: 60
+
+summary_lengths:
+  short:
+    compression_ratio: [0.05, 0.08]
+    min_words: 80
+    max_words: 250
+  medium:
+    compression_ratio: [0.10, 0.15]
+    min_words: 150
+    max_words: 500
+  long:
+    compression_ratio: [0.20, 0.30]
+    min_words: 300
+    max_words: 800
