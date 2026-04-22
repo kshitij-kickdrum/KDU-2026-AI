@@ -1,0 +1,13 @@
+import subprocess
+import sys
+
+from pathlib import Path
+
+
+if __name__ == "__main__":
+    root = Path(__file__).resolve().parents[1]
+    subprocess.run(
+        [sys.executable, "-m", "streamlit", "run", str(root / "frontend" / "app.py")],
+        check=True,
+    )
+
