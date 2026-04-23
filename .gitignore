@@ -1,0 +1,36 @@
+﻿.env
+.env.*
+!.env.example
+
+# Virtual environments
+.venv/
+venv/
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+.pytest_cache/
+pytest-cache-files-*/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Build and packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Test and coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
+junit.xml
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
