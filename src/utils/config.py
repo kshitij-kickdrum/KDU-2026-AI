@@ -9,6 +9,7 @@ import yaml
 from dotenv import load_dotenv
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
+DEAD_LOCAL_PROXY = "http://127.0.0.1:9"
 
 
 @dataclass(frozen=True)
@@ -95,8 +96,23 @@ def _path_from_env(name: str, default: str) -> Path:
     return path if path.is_absolute() else ROOT_DIR / path
 
 
+def _optional_env(name: str) -> str | None:
+    raw = os.getenv(name)
+    if raw is None:
+        return None
+    value = raw.strip()
+    return value or None
+
+
+def _clear_dead_local_proxy() -> None:
+    for name in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"):
+        if os.getenv(name) == DEAD_LOCAL_PROXY:
+            os.environ.pop(name, None)
+
+
 def load_config() -> AppConfig:
     load_dotenv(ROOT_DIR / ".env")
+    _clear_dead_local_proxy()
     model_yaml = _read_yaml(ROOT_DIR / "config" / "models.yml")
     prompt_yaml = _read_yaml(ROOT_DIR / "config" / "prompts.yml")
 
@@ -161,6 +177,6 @@ def load_config() -> AppConfig:
         log_file=_path_from_env("LOG_FILE", "logs/orchestration.log"),
         log_level=os.getenv("LOG_LEVEL", "INFO"),
         streamlit_port=_env_int("STREAMLIT_PORT", 8501),
-        openai_api_key=os.getenv("OPENAI_API_KEY"),
-        openrouter_api_key=os.getenv("OPENROUTER_API_KEY"),
+        openai_api_key=_optional_env("OPENAI_API_KEY"),
+        openrouter_api_key=_optional_env("OPENROUTER_API_KEY"),
     )

@@ -82,7 +82,7 @@ class BaseSDKAgent:
                 )
                 time.sleep(delay)
 
-        if self.config.openrouter_api_key is not None:
+        if self.config.openrouter_api_key:
             try:
                 return self._run_once(input_payload, input_tokens, use_openrouter=True)
             except Exception as fallback_error:
@@ -114,6 +114,7 @@ class BaseSDKAgent:
                 tools=self.tools,
                 model_settings=model_settings_cls(max_tokens=self.config.budgets.max_output_tokens),
             )
+        LOGGER.info("Starting SDK run: agent=%s model=%s", self.name, self.model)
         result = runner_cls.run_sync(
             agent,
             input_payload,
@@ -165,8 +166,12 @@ class BaseSDKAgent:
         try:
             import agents
 
-            agents.set_default_openai_key(self.config.openai_api_key)
-            if self.config.openai_api_key:
-                agents.set_tracing_export_api_key(self.config.openai_api_key)
+            client = agents.AsyncOpenAI(
+                api_key=self.config.openai_api_key,
+                timeout=15.0,
+                max_retries=0,
+            )
+            agents.set_tracing_disabled(True)
+            agents.set_default_openai_client(client, use_for_tracing=False)
         except Exception:
             LOGGER.debug("Could not configure default OpenAI key for Agents SDK", exc_info=True)
