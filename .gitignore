@@ -1,0 +1,30 @@
+.env
+
+# Local virtual environments
+.venv/
+venv/
+env/
+
+# Runtime data and generated app output
+data/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test/type/coverage caches
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+pytest-cache-files*/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Streamlit local secrets/config
+.streamlit/secrets.toml

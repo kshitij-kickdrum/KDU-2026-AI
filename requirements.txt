@@ -1,0 +1,7 @@
+crewai>=0.70.0
+crewai-tools
+pydantic>=2.0
+langchain-openai>=0.2
+python-dotenv>=1.0
+PyYAML
+streamlit>=1.35.0
