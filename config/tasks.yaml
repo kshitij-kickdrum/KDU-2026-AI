@@ -1,0 +1,23 @@
+research_task:
+  # description is the executable prompt; {topic} is supplied at runtime.
+  description: "Research the following topic thoroughly: {topic}. Use all available tools."
+  # expected_output defines the task-specific format.
+  expected_output: "A structured list of findings with sources, max 800 words."
+  # agent maps this task to an agent key.
+  agent: researcher
+
+fact_check_task:
+  # description is the executable prompt; {research_results} comes from research.
+  description: "Verify the accuracy of the following research findings: {research_results}"
+  # expected_output defines the verification format.
+  expected_output: "A verification report with status (passed/failed) and credibility notes."
+  # agent maps this task to an agent key.
+  agent: fact_checker
+
+writing_task:
+  # description is the executable prompt; {fact_check_details} comes from fact-checking.
+  description: "Write a comprehensive research document based on: {fact_check_details}"
+  # expected_output defines the final report format.
+  expected_output: "A polished research document with executive summary, max 1200 words."
+  # agent maps this task to an agent key.
+  agent: writer
