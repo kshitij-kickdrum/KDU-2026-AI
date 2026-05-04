@@ -4,7 +4,7 @@
 
 ### Abstract
 
-This system implements a production-grade multi-agent orchestration platform using the OpenAI Agents SDK that demonstrates resilient failure handling through circuit breakers, proper agent isolation with domain-specific tool access, and intelligent memory management with context-aware compaction. The architecture supports five distinct operational phases: loop detection, multi-agent coordination, context passing, memory compaction, and hybrid planner-executor workflows.
+This system implements a production-grade multi-agent orchestration platform using the OpenAI Agents SDK that demonstrates resilient failure handling through circuit breakers, proper agent isolation with domain-specific tool access, and intelligent memory management with context-aware compaction. The architecture supports five distinct operational phases: SDK-based loop detection, multi-agent coordination, context passing, memory compaction, and hybrid planner-executor workflows.
 
 ### User Stories
 
@@ -26,7 +26,7 @@ This system implements a production-grade multi-agent orchestration platform usi
 
 ### Implementation Approach
 
-The system uses **LLM-based orchestration** throughout - no hardcoded keyword matching. The OrchestrationEngine routes queries by analyzing intent, and the CoordinatorAgent uses the Agents SDK to intelligently decide which delegation tools to invoke based on query semantics. All agents are BaseSDKAgent instances that wrap the OpenAI Agents SDK with circuit breaker integration, retry logic, and OpenRouter fallback.
+The system uses **LLM-based orchestration** for agent tool selection and delegation. The OrchestrationEngine uses small explicit scenario triggers for lab workflows such as "active users" and `/plan`, then hands execution to SDK agents. CoordinatorAgent uses the Agents SDK to intelligently decide which delegation tools to invoke based on query semantics. All agents are BaseSDKAgent instances that wrap the OpenAI Agents SDK with circuit breaker integration, retry logic, and OpenRouter fallback.
 
 ## 2. System Architecture & Flow
 
@@ -145,36 +145,47 @@ sequenceDiagram
     participant Orchestration
     participant Agent
     participant Tool
+    participant Runtime
     participant CircuitBreaker
     participant Logger
 
     User->>Streamlit: "Count the active users"
     Streamlit->>Orchestration: process_query(query, session_id)
-    Orchestration->>Agent: run(query)
+    Orchestration->>Agent: run_circuit_breaker_demo()
+    Agent->>Agent: BaseSDKAgent.run("Count the active users")
     
     Agent->>Tool: query_internal_database()
-    Tool-->>Agent: ERROR 500
-    Agent->>CircuitBreaker: record_failure("query_internal_database")
+    Tool->>Runtime: invoke(query_internal_database)
+    Runtime->>CircuitBreaker: ensure_allowed("query_internal_database")
+    Runtime->>CircuitBreaker: record_failure("query_internal_database")
     CircuitBreaker->>CircuitBreaker: increment_counter() -> 1
-    CircuitBreaker-->>Agent: continue
+    Runtime->>Logger: log tool_invocations error
+    Runtime-->>Tool: "ERROR 500: internal database error"
+    Tool-->>Agent: tool error output
 
-    Agent->>Tool: query_internal_database() [retry 1]
-    Tool-->>Agent: ERROR 500
-    Agent->>CircuitBreaker: record_failure("query_internal_database")
+    Agent->>Tool: query_internal_database() [SDK/model retry]
+    Tool->>Runtime: invoke(query_internal_database)
+    Runtime->>CircuitBreaker: ensure_allowed("query_internal_database")
+    Runtime->>CircuitBreaker: record_failure("query_internal_database")
     CircuitBreaker->>CircuitBreaker: increment_counter() -> 2
-    CircuitBreaker-->>Agent: continue
+    Runtime->>Logger: log tool_invocations error
+    Runtime-->>Tool: "ERROR 500: internal database error"
+    Tool-->>Agent: tool error output
 
-    Agent->>Tool: query_internal_database() [retry 2]
-    Tool-->>Agent: ERROR 500
-    Agent->>CircuitBreaker: record_failure("query_internal_database")
+    Agent->>Tool: query_internal_database() [SDK/model retry]
+    Tool->>Runtime: invoke(query_internal_database)
+    Runtime->>CircuitBreaker: ensure_allowed("query_internal_database")
+    Runtime->>CircuitBreaker: record_failure("query_internal_database")
     CircuitBreaker->>CircuitBreaker: increment_counter() -> 3
     CircuitBreaker->>CircuitBreaker: check_threshold() -> OPEN
 
     CircuitBreaker->>Logger: log_loop_detection("query_internal_database", 3)
-    CircuitBreaker-->>Agent: STOP_EXECUTION
+    Runtime->>Logger: log tool_invocations error
+    Runtime-->>Agent: CircuitBreakerOpenError
 
+    Agent->>Agent: BaseSDKAgent catches CircuitBreakerOpenError
     Agent-->>Orchestration: fallback_response
-    Orchestration-->>Streamlit: "Unable to query database. Please try again later."
+    Orchestration-->>Streamlit: graceful fallback response
     Streamlit-->>User: Display fallback message
 ```
 
@@ -226,6 +237,7 @@ All agents extend **BaseSDKAgent**, which wraps the OpenAI Agents SDK with:
 - Circuit breaker integration via ToolRuntime
 - Automatic retry with exponential backoff (configurable max retries)
 - OpenRouter fallback when OpenAI API fails
+- Immediate circuit-breaker fallback without SDK retry or OpenRouter fallback when a tool circuit opens
 - Token budget validation before SDK invocation
 - Structured context payload construction (query + JSON context, NOT full history)
 
@@ -236,7 +248,7 @@ All agents extend **BaseSDKAgent**, which wraps the OpenAI Agents SDK with:
 | Salary, Payroll, Banking, Transactions | FinanceAgent | 6 finance tools only | gpt-4o-mini |
 | PTO, Benefits, Personnel Records | HRAgent | 6 HR tools only | gpt-4o-mini |
 | Delegation, Routing | CoordinatorAgent | 3 delegation tools only | gpt-4o-mini |
-| Loop Detection Demo | LoopDetectionAgent | 1 failing database tool | o3-mini |
+| Loop Detection Demo | LoopDetectionAgent | 1 failing database tool, executed through SDK tool loop | o3-mini |
 | Plan Generation | PlannerAgent | No tools (pure reasoning) | o3-mini |
 | Plan Execution | ExecutorAgent | No tools (step execution) | gpt-4o-mini |
 
@@ -249,10 +261,10 @@ All agents extend **BaseSDKAgent**, which wraps the OpenAI Agents SDK with:
 ### Routing Strategy
 
 **OrchestrationEngine.process_query()** routes queries using:
-1. **Loop Detection**: Hardcoded check for "count the active users" → LoopDetectionAgent
-2. **Planner-Executor**: Hardcoded check for "/plan" prefix → PlannerAgent + ExecutorAgent
-3. **Long Document Ingestion**: Token/word threshold check → extract case facts locally, skip agent
-4. **Default**: All other queries → CoordinatorAgent (LLM decides delegation)
+1. **Loop Detection**: Hardcoded lab scenario check for "count the active users" -> LoopDetectionAgent
+2. **Planner-Executor**: Hardcoded check for "/plan" prefix -> PlannerAgent + ExecutorAgent
+3. **Long Document Ingestion**: Token/word threshold check -> extract case facts locally, skip agent
+4. **Default**: All other queries -> CoordinatorAgent (LLM decides delegation)
 
 **CoordinatorAgent delegation** is fully LLM-driven:
 - SDK agent receives 3 delegation tools: `delegate_to_finance`, `delegate_to_hr`, `analyze_query`
@@ -293,11 +305,13 @@ All agents extend **BaseSDKAgent**, which wraps the OpenAI Agents SDK with:
 - States: closed → open (after 3 failures) → half-open (after timeout) → closed (on success)
 - Persistence: SQLite `circuit_breaker_state` table
 - Integration: ToolRuntime wraps all tool invocations with `ensure_allowed()` check
+- Loop detection demo uses the real Agents SDK tool loop: LoopDetectionAgent calls `BaseSDKAgent.run("Count the active users")` and the model invokes `query_internal_database`
 
 **Failure Handling:**
-- Tool failure → `record_failure()` → increment counter
-- Counter ≥ 3 → state = "open" → log ERROR "Loop detected"
-- Open circuit → `CircuitBreakerOpenError` → return `FALLBACK_RESPONSE`
+- Tool failure → `record_failure()` → increment counter → log `tool_invocations` error
+- Failure count below threshold → return structured tool output such as `ERROR 500: internal database error` so the SDK/model can decide whether to retry the tool
+- Counter ≥ 3 → state = "open" → log ERROR "Loop detected" → raise `CircuitBreakerOpenError`
+- Open circuit → BaseSDKAgent catches `CircuitBreakerOpenError` → return `FALLBACK_RESPONSE` without generic retry or OpenRouter fallback
 - Tool success → `record_success()` → reset counter to 0
 
 ### Model Selection & Cost Optimization

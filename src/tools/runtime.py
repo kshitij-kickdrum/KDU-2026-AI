@@ -4,7 +4,7 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-from src.core.circuit_breaker import CircuitBreaker
+from src.core.circuit_breaker import FALLBACK_RESPONSE, CircuitBreaker
 from src.core.exceptions import CircuitBreakerOpenError
 from src.storage.database import Database
 
@@ -64,7 +64,9 @@ class ToolRuntime:
                 response_status="error",
                 error_message=str(exc),
             )
-            raise
+            if self.circuit_breaker.is_open(tool_name):
+                raise CircuitBreakerOpenError(FALLBACK_RESPONSE) from exc
+            return f"ERROR 500: {exc}"
 
     def log_invocation(
         self,

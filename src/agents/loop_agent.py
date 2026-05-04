@@ -3,8 +3,6 @@ from __future__ import annotations
 import logging
 
 from src.agents.base_agent import BaseSDKAgent
-from src.core.circuit_breaker import FALLBACK_RESPONSE
-from src.core.exceptions import CircuitBreakerOpenError
 from src.tools.database_tools import create_database_tools
 from src.tools.runtime import ToolRuntime
 from src.utils.config import AppConfig
@@ -33,23 +31,4 @@ class LoopDetectionAgent(BaseSDKAgent):
             "Starting circuit breaker demo for query_internal_database with max_failures=%s",
             self.threshold,
         )
-        for attempt in range(1, self.threshold + 1):
-            try:
-                self.runtime.invoke(
-                    session_id=self.session_id,
-                    agent_name="LoopDetectionAgent",
-                    tool_name="query_internal_database",
-                    parameters={"attempt": attempt},
-                    handler=lambda: (_ for _ in ()).throw(
-                        RuntimeError("500 internal database error")
-                    ),
-                )
-            except CircuitBreakerOpenError:
-                LOGGER.info("Circuit breaker blocked attempt=%s", attempt)
-                return FALLBACK_RESPONSE
-            except Exception:
-                if self.runtime.circuit_breaker.is_open("query_internal_database"):
-                    LOGGER.info("Circuit breaker opened after attempt=%s", attempt)
-                    return FALLBACK_RESPONSE
-                LOGGER.info("Retrying failing tool after attempt=%s", attempt)
-        return FALLBACK_RESPONSE
+        return self.run("Count the active users")

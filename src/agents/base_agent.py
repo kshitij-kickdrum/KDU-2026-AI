@@ -6,8 +6,10 @@ import time
 from typing import Any
 
 from src.agents.sdk import build_openrouter_model, load_agents_sdk
+from src.core.circuit_breaker import FALLBACK_RESPONSE
 from src.core.exceptions import (
     AgentExecutionError,
+    CircuitBreakerOpenError,
     MissingAPIKeyError,
     ProviderConnectionError,
     TokenBudgetError,
@@ -65,6 +67,9 @@ class BaseSDKAgent:
         for attempt in range(self.config.rate_limits.max_retries + 1):
             try:
                 return self._run_once(input_payload, input_tokens)
+            except CircuitBreakerOpenError:
+                LOGGER.warning("Circuit breaker opened during SDK run: agent=%s", self.name)
+                return FALLBACK_RESPONSE
             except Exception as exc:
                 last_error = exc
                 if not self._looks_retryable(exc) or attempt >= self.config.rate_limits.max_retries:
@@ -85,6 +90,9 @@ class BaseSDKAgent:
         if self.config.openrouter_api_key:
             try:
                 return self._run_once(input_payload, input_tokens, use_openrouter=True)
+            except CircuitBreakerOpenError:
+                LOGGER.warning("Circuit breaker opened during fallback SDK run: agent=%s", self.name)
+                return FALLBACK_RESPONSE
             except Exception as fallback_error:
                 last_error = fallback_error
 
