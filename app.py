@@ -23,6 +23,7 @@ from src.ui.flow_state_view import render_flow_state
 from src.ui.history_view import render_history
 from src.ui.stats_panel import render_stats_panel
 from src.utils.cost_tracker import CostTracker
+from src.utils.logger import get_logger
 from src.utils.validation import validate_topic
 from src.workflows.flow import run_flow
 from src.workflows.hierarchical import run_hierarchical
@@ -32,6 +33,9 @@ try:
     import streamlit as st
 except Exception:  # pragma: no cover
     st = None  # type: ignore[assignment]
+
+
+logger = get_logger(__name__)
 
 
 def run_research_from_ui(topic: str, mode: str) -> dict[str, Any]:
@@ -94,7 +98,8 @@ def render_app() -> None:
     except (EnvironmentError, ValueError) as exc:
         st.error(str(exc))
         return
-    except Exception:
+    except Exception as exc:
+        logger.exception("Research execution failed from Streamlit UI: %s", exc)
         st.error("Research execution failed. Check logs for details.")
         return
 

@@ -4,24 +4,24 @@ from __future__ import annotations
 
 from typing import Any
 
-try:
-    from crewai.flow.flow import Flow, listen, router, start
-except Exception:  # pragma: no cover
 
-    class Flow:  # type: ignore[no-redef]
-        """Fallback Flow base class."""
+class Flow:
+    """Local Flow base for deterministic Streamlit execution."""
 
-    def start() -> Any:
-        """Fallback start decorator."""
-        return lambda func: func
 
-    def listen(_: Any) -> Any:
-        """Fallback listen decorator."""
-        return lambda func: func
+def start() -> Any:
+    """Local no-op start decorator."""
+    return lambda func: func
 
-    def router(_: Any) -> Any:
-        """Fallback router decorator."""
-        return lambda func: func
+
+def listen(_: Any) -> Any:
+    """Local no-op listen decorator."""
+    return lambda func: func
+
+
+def router(_: Any) -> Any:
+    """Local no-op router decorator."""
+    return lambda func: func
 
 from src.memory.manager import MemoryManager
 from src.state.flow_state import FlowState
