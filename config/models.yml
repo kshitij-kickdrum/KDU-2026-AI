@@ -1,0 +1,29 @@
+models:
+  reasoning: o3-mini
+  execution: gpt-4o-mini
+  coordinator: gpt-4o-mini
+  finance: gpt-4o-mini
+  hr: gpt-4o-mini
+  planner: o3-mini
+  executor: gpt-4o-mini
+  summarizer: gpt-4o-mini
+
+budgets:
+  max_input_tokens: 12000
+  max_output_tokens: 800
+  max_agent_turns: 6
+  compaction_chunk_tokens: 3000
+
+memory:
+  token_threshold: 6000
+  long_document_word_threshold: 3000
+  compaction_ratio: 0.3
+
+circuit_breaker:
+  threshold: 3
+  timeout_seconds: 60
+
+rate_limits:
+  max_retries: 3
+  backoff_base_seconds: 1
+  backoff_max_seconds: 10

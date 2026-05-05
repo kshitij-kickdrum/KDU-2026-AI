@@ -1,0 +1,273 @@
+🧠 Hands-on Lab: AgentKit Orchestration, Loop Detection, and Memory Compaction (2-Day Epic)
+
+🎯 Objective
+Build a production-grade multi-agent orchestration system using the OpenAI Agents SDK.
+The system should demonstrate robustness, proper agent isolation, memory handling, and failure management in real-world scenarios.
+
+🧩 Problem Statement
+You are tasked with designing a resilient, multi-agent architecture that can:
+Prevent infinite execution loops
+
+
+Handle failures gracefully
+
+
+Pass context between isolated agents correctly
+
+
+Manage and compress memory without losing critical information
+
+
+Support structured planning and execution workflows
+ 	
+
+⚙️ Task
+
+Phase 1: Loop Detection & Circuit Breaker
+Your Task
+Initialize a single agent
+
+
+Use a reasoning model (o3-mini)
+
+
+Add a tool: query_internal_database
+
+
+Intentionally make the tool fail (return 500 error)
+
+
+Ask the agent: “Count the active users”
+
+
+The Challenge
+The agent will repeatedly retry the failing tool, causing a loop.
+Questions to Answer
+How many retries does the agent attempt before stopping?
+
+
+Implement a Circuit Breaker that:
+
+
+Stops execution after 3 consecutive failures
+
+
+Logs loop detection
+
+
+Returns a graceful fallback response to the user
+
+
+
+Phase 2: Coordinator & Agent Isolation
+Your Task
+Create a system with:
+
+
+Coordinator Agent
+
+
+Finance Agent
+
+
+HR Agent
+
+
+The Challenge
+Avoid giving all tools to the Coordinator.
+Instead:
+Restrict Coordinator to delegation tools only
+
+
+Assign domain-specific tools to sub-agents
+
+
+Questions to Answer
+How does the system handle:
+
+ “What is John’s salary and how much PTO does he have?”
+
+
+How does the Coordinator sequence delegation?
+
+
+Why is tool isolation critical for:
+
+
+Reducing prompt bloat
+
+
+Improving reliability
+
+
+
+Phase 3: Context Passing Between Agents
+Your Task
+Ask the Coordinator:
+
+ “Update my banking details. Routing number is 123456789.”
+
+
+Transfer to Finance Agent
+
+
+The Challenge
+Sub-agents do not inherit prior conversation context automatically.
+Questions to Answer
+How do you pass a structured Context Payload during handoff?
+
+
+How do you ensure:
+
+
+Only relevant data is passed
+
+
+Full chat history is NOT transferred
+
+
+
+Phase 4: Memory Compaction & Case Facts
+Your Task
+Enable persistent session memory
+
+
+Input a long document (~5000 words) with transactional data
+
+
+Follow with irrelevant messages (e.g., “okay”, “cool”)
+
+
+The Challenge
+Naive summarization removes critical details (e.g., order IDs, amounts)
+Questions to Answer
+Implement a system to extract and store:
+
+
+Numerical data
+
+
+Transactional information
+
+
+Maintain a structured Case Facts dictionary
+
+
+Add a Flagging Mechanism:
+
+
+Detect missing required fields (e.g., CVV)
+
+
+Mark state as requires_user_input
+
+
+How does this prevent:
+
+
+Data loss
+
+
+Context degradation
+
+
+
+Phase 5: Hybrid Planner–Executor Workflow
+Your Task
+Build a two-agent system:
+
+
+Planner Agent (o3-mini)
+
+
+Executor Agent (gpt-4o)
+
+
+Workflow
+Planner generates structured JSON steps
+
+
+Executor executes the steps
+
+
+Questions to Answer
+How do you pass memory between Planner and Executor?
+
+
+How do you maintain consistency across steps?
+
+
+What is the biggest architectural advantage of:
+
+
+Planner–Executor vs raw API chaining
+
+
+
+🧪 Expectations
+Your system should demonstrate:
+Loop detection and failure handling
+
+
+Multi-agent orchestration
+
+
+Proper tool isolation
+
+
+Context-aware agent communication
+
+
+Memory management and compaction
+
+
+Structured planning and execution
+
+
+
+📦 Deliverable
+A complete implementation including:
+Multi-agent architecture
+
+
+Circuit breaker logic
+
+
+Context passing mechanism
+
+
+Memory compaction strategy
+
+
+Hybrid planner–executor system
+
+
+
+🔧 LLM Usage & Cost Guidelines
+🔹 LLM Provider Guidelines 
+Use OpenAI API (GPT-4o mini / GPT-3.5 class models preferred)
+
+
+If OpenAI API keys are provided/allowed, use them as the primary provider
+
+
+Use OpenRouter as fallback if OpenAI is unavailable
+
+
+Avoid high-cost models unless explicitly required
+
+
+
+
+
+⚠️ Cost & Usage Guidelines
+Focus is on architecture and understanding, not output quality
+
+
+Always prefer the cheapest models during all hands-on/development phases
+
+
+Avoid unnecessary retries, loops, and repeated API calls
+
+
+Keep context small to reduce token usage (avoid sending large inputs repeatedly)
