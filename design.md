@@ -241,95 +241,58 @@ sequenceDiagram
 
 ### 1. Interrupt Mechanism
 
-Uses a shared `asyncio.Event` flag checked between TTS audio chunks:
+The system uses a shared `asyncio.Event` flag as an interrupt signal between the audio pipeline and TTS engine. The TTS engine checks this flag between audio chunks (not mid-chunk), allowing it to stop playback within one chunk duration when the user speaks during agent response. The AudioPipeline monitors microphone input continuously and sets the interrupt flag when speech energy exceeds the threshold while TTS is playing. Upon interruption, the sounddevice output buffer is flushed, the partial audio buffer is discarded, and the response is marked as truncated in the message history.
 
-```python
-# In TTSEngine.synthesize_and_play():
-async def synthesize_and_play(self, text: str, interrupt_flag: asyncio.Event) -> None:
-    audio_chunks = self._synthesize(text)
-    for chunk in audio_chunks:
-        if interrupt_flag.is_set():
-            sd.stop()  # flush sounddevice output buffer
-            return     # stop immediately
-        sd.play(chunk, samplerate=self.sample_rate, blocking=False)
-        await asyncio.sleep(len(chunk) / self.sample_rate)
+**Worst-case interrupt latency**: One chunk duration (20–50 ms for Kokoro-82M at 24 kHz).
 
-# In AudioPipeline:
-def _audio_callback(self, indata, frames, time, status):
-    if self._is_playing and self._energy(indata) > self.silence_threshold:
-        self.interrupt_flag.set()
-```
+**InterruptController** encapsulates the interrupt flag with methods to trigger, clear, and check interrupt state, providing a clean interface for both the audio pipeline and TTS engine.
 
-**Worst-case latency**: One chunk duration (20–50 ms for Kokoro-82M at 24 kHz).
+### 2. Interactive Voice Session
 
-### 2. Agent Handoff
+The **VoiceSession** orchestrator manages continuous multi-turn voice conversations with live barge-in capability. It maintains session state across turns, coordinates the audio pipeline with agent handoffs, and handles interrupt events during TTS playback. The session runs a loop that captures speech, transcribes, routes through agents, plays responses, and monitors for interruptions—all while keeping the microphone active to detect user speech during agent responses.
 
-AgentState is a Python dataclass serialized to dict (JSON-serializable) for logging, passed by reference in-process.
+Key responsibilities:
+- Maintain AgentState across multiple conversation turns
+- Coordinate AudioPipeline, Transcriber, TriageAgent, BillingAgent, and TTSEngine
+- Handle interrupt events and mark truncated responses
+- Log session start/end with total turns and latency metrics
 
-```python
-@dataclass
-class AgentState:
-    session_id: str          # UUID4
-    intent: str              # "billing" | "technical_support" | "general_inquiry"
-    transcript: str
-    message_history: list[dict]  # max 10 turns
-    timestamp_utc: str       # ISO 8601
-    metadata: dict
-```
+### 3. Agent Handoff
 
-### 3. Parallel Execution
+AgentState is a dataclass containing `session_id`, `intent`, `transcript`, `message_history`, `timestamp_utc`, and `metadata`. It is serialized to dict (JSON-serializable) for NDJSON logging and passed by reference in-process between agents. The handoff mechanism preserves complete conversation context while enabling deterministic replay from logs.
 
-Uses `asyncio.gather()` with `return_exceptions=True` for DB_Agent and Vector_Agent:
+### 4. Parallel Execution
 
-```python
-results = await asyncio.gather(
-    db_agent.query(question, session_id),
-    vector_agent.search(question, session_id),
-    return_exceptions=True
-)
-```
+The Coordinator spawns DB_Agent and Vector_Agent as concurrent async tasks using `asyncio.create_task()` and aggregates results with `asyncio.gather(return_exceptions=True)`. This ensures both agents start within 50ms of each other and execute truly in parallel. If one agent fails, the successful result is preserved and passed to the Consensus_Agent along with a structured failure record. If both fail, the coordinator returns an error without invoking consensus.
 
-### 4. LLM Fallback
+### 5. LLM Fallback Strategy
 
-Try OpenAI first, catch `openai.APIConnectionError` or HTTP 5xx, then retry with OpenRouter using `httpx`.
+The LLM client attempts OpenAI gpt-4o-mini as primary. On HTTP 429 (rate limit), it retries once after the `Retry-After` header duration. On HTTP 5xx or connection errors, it immediately retries with OpenRouter using the same model identifier. HTTP 4xx errors (except 429) are returned to the caller without retry. This two-tier approach ensures resilience while respecting rate limits.
 
-### 5. Concurrency Queue
+### 6. Concurrency Queue
 
-`asyncio.Semaphore` wrapping SQLite (max 5) and FAISS (max 10) access:
+Shared local resources (SQLite and FAISS) are protected by `ConcurrencyQueue`, an `asyncio.Semaphore` wrapper with timeout enforcement. SQLite allows max 5 simultaneous connections; FAISS allows max 10 concurrent reads. If a request waits longer than the configured timeout (default 5s), it raises a timeout error instead of blocking indefinitely. Agents acquire slots via async context manager, ensuring proper release in finally blocks.
 
-```python
-class ConcurrencyQueue:
-    def __init__(self, max_concurrent: int, timeout_seconds: float = 5.0):
-        self._semaphore = asyncio.Semaphore(max_concurrent)
-        self._timeout = timeout_seconds
+### 7. Token Pruning Strategy
 
-    @asynccontextmanager
-    async def acquire(self):
-        try:
-            await asyncio.wait_for(self._semaphore.acquire(), timeout=self._timeout)
-        except asyncio.TimeoutError:
-            raise ConcurrencyTimeoutError(f"Queue slot not available within {self._timeout}s")
-        try:
-            yield
-        finally:
-            self._semaphore.release()
-```
+**Sliding window**: Message history is capped at 10 turns. When exceeded, the oldest user/assistant pairs are removed until the count is ≤10.
 
-### 6. Token Pruning
+**Summarization**: When cumulative prompt tokens exceed 50,000, the oldest 5 turns are replaced with a single LLM-generated summary message.
 
-- **Sliding window**: Keep max 10 turns, remove oldest pairs
-- **Summarization**: When cumulative tokens > 50k, summarize oldest 5 turns using LLM
-- Uses `tiktoken` for accurate token counting
-- System prompt (index 0) is never pruned
+Token counting uses `tiktoken` for accuracy. System prompts are never pruned. All pruning events are logged to NDJSON with before/after token counts.
 
-### 7. NDJSON Logging
+### 8. NDJSON Logging and Replay
 
-Each log record: `json.dumps(record) + "\n"` appended to `logs/session.ndjson`.
+Each log record is written as newline-delimited JSON to `logs/session.ndjson`. The Monitor stores exact JSON payloads of AgentState at every handoff, enabling deterministic session replay. The `replay_session.py` script reconstructs chronological event sequences for a given session_id, supporting debugging, token auditing, and interrupt forensics.
 
-**Why exact JSON payloads matter**:
+**Why exact payloads matter**:
 - **Deterministic replay**: Re-feed exact AgentState to reproduce bugs
 - **Token audit**: Offline token counting and cost analysis
 - **Interrupt forensics**: `truncated_response_length` shows exactly what was cut off
+
+### 9. FAISS Fallback Strategy
+
+When the FAISS library is unavailable or the index fails to load, the system gracefully degrades to a metadata-based text search. The fallback tokenizes the query, scores documents by term overlap in title and content preview, and returns the top-k results. This ensures Phase 2 and Phase 3 can demonstrate orchestration logic even without FAISS installed, while maintaining the same interface contract.
 
 ---
 
@@ -337,31 +300,11 @@ Each log record: `json.dumps(record) + "\n"` appended to `logs/session.ndjson`.
 
 ### Core Data Structures
 
-**AgentState** (see above)
+**AgentState**: Contains `session_id` (UUID4), `intent` (billing/technical_support/general_inquiry), `transcript`, `message_history` (list of message dicts, max 10 turns), `timestamp_utc` (ISO 8601), and `metadata` (arbitrary key-value pairs).
 
-**AgentResult** (worker agent responses):
-```python
-@dataclass
-class AgentResult:
-    session_id: str
-    agent_name: str
-    status: str          # "success" | "failure" | "timeout"
-    data: dict | None
-    error: str | None
-    latency_ms: int
-```
+**AgentResult**: Worker agent response structure with `session_id`, `agent_name`, `status` (success/failure/timeout), `data` (optional dict), `error` (optional string), and `latency_ms`.
 
-**LLMResponse**:
-```python
-@dataclass
-class LLMResponse:
-    content: str
-    model_id: str
-    prompt_tokens: int
-    completion_tokens: int
-    latency_ms: int
-    status: str  # "success" | "error"
-```
+**LLMResponse**: Contains `content`, `model_id`, `prompt_tokens`, `completion_tokens`, `latency_ms`, and `status` (success/error).
 
 ### Log Record Types
 
@@ -378,21 +321,9 @@ See `requirements.md` for complete field specifications.
 
 ### Storage Schemas
 
-**SQLite** (`customer_billing` table):
-```sql
-CREATE TABLE customer_billing (
-    customer_id TEXT PRIMARY KEY,
-    full_name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    plan_name TEXT NOT NULL,
-    balance_usd REAL NOT NULL DEFAULT 0.0,
-    due_date TEXT NOT NULL,
-    status TEXT CHECK(status IN ('current', 'overdue', 'suspended')),
-    created_at TEXT NOT NULL
-);
-```
+**SQLite** (`customer_billing` table): Contains `customer_id` (primary key), `full_name`, `email` (unique), `plan_name`, `balance_usd`, `due_date`, `status` (current/overdue/suspended with CHECK constraint), and `created_at`. Indexed on email and status.
 
-**FAISS**: Binary `.index` file + JSON sidecar (`faiss_metadata.json`) mapping vector IDs to document metadata.
+**FAISS**: Binary `.index` file + JSON sidecar (`faiss_metadata.json`) mapping vector IDs to document metadata (doc_id, title, content_preview, source, created_at).
 
 ---
 
@@ -486,16 +417,24 @@ realtime-voice-agent-system/
 ├── requirements.txt
 ├── README.md
 ├── config/
+│   ├── __init__.py
 │   └── settings.py
+├── core/
+│   ├── __init__.py
+│   └── voice_session.py
 ├── audio/
+│   ├── __init__.py
 │   ├── capture.py
 │   ├── playback.py
 │   └── interrupt.py
 ├── transcription/
+│   ├── __init__.py
 │   └── transcriber.py
 ├── tts/
+│   ├── __init__.py
 │   └── kokoro_tts.py
 ├── agents/
+│   ├── __init__.py
 │   ├── base_agent.py
 │   ├── triage_agent.py
 │   ├── billing_agent.py
@@ -504,19 +443,25 @@ realtime-voice-agent-system/
 │   ├── consensus_agent.py
 │   └── coordinator.py
 ├── llm/
+│   ├── __init__.py
 │   └── llm_client.py
 ├── state/
+│   ├── __init__.py
 │   └── agent_state.py
 ├── storage/
+│   ├── __init__.py
 │   ├── sqlite_store.py
 │   └── faiss_store.py
 ├── monitoring/
+│   ├── __init__.py
 │   └── monitor.py
 ├── concurrency/
+│   ├── __init__.py
 │   └── queue_manager.py
 ├── scripts/
 │   ├── seed_db.py
 │   ├── build_faiss_index.py
+│   ├── replay_session.py
 │   └── simulate_100_sessions.py
 ├── data/
 │   ├── customer_billing.db
@@ -541,35 +486,41 @@ realtime-voice-agent-system/
 
 ### Setup Commands
 
+**Phase 1 - Voice + Interruption:**
 ```bash
-# 1. Clone and setup
-git clone <repo-url>
-cd realtime-voice-agent-system
-python3.11 -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+# Basic text input
+python main.py --phase 1 --text "What is my billing balance?"
 
-# 2. Install dependencies
-pip install -r requirements.txt
+# Microphone capture (single utterance)
+python main.py --phase 1 --voice
 
-# 3. Configure environment
-cp .env.example .env
-# Edit .env: add OPENAI_API_KEY and OPENROUTER_API_KEY
+# Interactive mode (continuous conversation with live barge-in)
+python main.py --phase 1 --interactive --max-turns 5
 
-# 4. Seed data
-python scripts/seed_db.py
-python scripts/build_faiss_index.py
+# Deterministic interrupt demo
+python main.py --phase 1 --interrupt-demo
+```
 
-# 5. Run demos
-python main.py --phase 1                                    # Voice + interruption
-python main.py --phase 2 --query "What is my balance?"     # Parallel execution
-python scripts/simulate_100_sessions.py                     # 100 concurrent sessions
+**Phase 2 - Parallel Execution:**
+```bash
+python main.py --phase 2 --query "What is the balance for C-00123?"
+```
 
-# 6. Test
-pytest --cov=. --cov-report=term-missing tests/
+**Phase 3 - 100-Session Simulation:**
+```bash
+python main.py --phase 3
+# or directly:
+python scripts/simulate_100_sessions.py
+```
 
-# 7. Lint
-black .
-flake8 .
+**Session Replay:**
+```bash
+python scripts/replay_session.py <session_id>
+```
+
+**Standalone Transcription:**
+```bash
+python main.py --transcribe-audio path/to/audio.pcm
 ```
 
 ---
@@ -606,3 +557,57 @@ See `requirements.md` Requirements 14, 15, 16 for complete per-phase DoD criteri
 **Phase 2**: Parallel execution verified (≤50ms start difference), partial failure demo, unit tests pass, 80% coverage, tool logging, security check
 
 **Phase 3**: 100-session simulation (≤120s), pruning demonstration, unit tests pass, 80% coverage, replay validation, README updated
+
+---
+
+## Implementation Questions & Answers
+
+### Phase 1: Real-Time Voice & Interruption Handling
+
+**Q1: What exact state is passed during agent handoff?**
+
+AgentState dataclass containing session_id, intent classification, transcript text, message_history array (max 10 turns), timestamp_utc, and metadata dict. Serialized to JSON for logging, passed by reference in-process.
+
+**Q2: How did you handle audio buffer flushing?**
+
+On interrupt detection, sounddevice output buffer is immediately flushed via `stream.abort()`, partial audio buffer discarded, and interrupt flag checked between TTS chunks. Pre-interrupt audio frames dropped to prevent stale playback.
+
+**Q3: How did you handle message truncation?**
+
+Truncated responses marked with `"truncated": true` metadata in message_history. Monitor logs InterruptEvent with truncated_response_length. Partial response preserved for context but flagged as incomplete for next turn.
+
+**Q4: How does your system prevent overlapping audio playback and recording?**
+
+Single sounddevice stream handles both capture and playback sequentially. During TTS playback, microphone monitoring continues but only sets interrupt flag—no new buffer created until playback stops and flag clears.
+
+### Phase 2: Parallel Execution & Consensus Mechanism
+
+**Q5: Did both agents execute truly in parallel?**
+
+Yes. Coordinator spawns DB_Agent and Vector_Agent as concurrent asyncio tasks via `create_task()`, then aggregates with `gather(return_exceptions=True)`. Both start within 50ms, verified by timestamp logging in ToolInvocationLog records.
+
+**Q6: What happens if one agent succeeds and one agent fails?**
+
+Successful result preserved and passed to Consensus_Agent with failure record. Consensus generates response disclosing unavailable source. If both fail, coordinator returns structured error without invoking consensus, logged as CoordinatorError.
+
+**Q7: What happens if both agents fail?**
+
+Coordinator skips Consensus_Agent invocation, returns CoordinatorResult with error status and combined error messages. Monitor logs both failures. User receives error message indicating system unavailability without exposing internal details.
+
+**Q8: What validation did you implement to prevent unauthorized access?**
+
+API keys loaded only from `.env` via python-dotenv, never hardcoded. Monitor redacts Authorization headers in logs. SQLite uses parameterized queries. Startup warns if `.env` missing from `.gitignore`. CI check ensures no keys in source.
+
+### Phase 3: Scaling, Monitoring & Cost Control
+
+**Q9: What strategy did you use to prevent token bloat in message arrays?**
+
+Sliding window caps message_history at 10 turns, removing oldest pairs when exceeded. When cumulative tokens exceed 50,000, oldest 5 turns replaced with LLM-generated summary. System prompts never pruned. All pruning logged to NDJSON.
+
+**Q10: Write pseudo-code for a concurrency queue to protect databases from overload.**
+
+ConcurrencyQueue wraps asyncio.Semaphore with timeout. SQLite max 5 slots, FAISS max 10. Agents acquire via async context manager: `async with queue.acquire(timeout=5): execute_query()`. Timeout raises error instead of blocking. Release guaranteed in finally block.
+
+**Q11: Why is storing exact JSON payloads critical for debugging and observability?**
+
+Enables deterministic replay by re-feeding exact AgentState to reproduce bugs. Supports offline token counting for cost analysis. Provides interrupt forensics showing exact truncation points. Chronological event reconstruction from session_id enables root-cause analysis.

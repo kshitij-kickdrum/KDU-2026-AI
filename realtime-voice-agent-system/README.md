@@ -46,6 +46,7 @@ The FAISS builder writes a metadata fallback even if `faiss-cpu` is unavailable.
 ```powershell
 python main.py --phase 1 --text "What is my current billing balance for C-00123?"
 python main.py --phase 1 --voice
+python main.py --phase 1 --interactive --max-turns 5
 ```
 
 Flow:
@@ -56,7 +57,7 @@ Flow:
 4. `TTSEngine` uses Kokoro when available, otherwise prints/plays a generated fallback tone.
 5. Interrupts use an `asyncio.Event`; playback checks the flag between short chunks and stops within the chunk boundary.
 
-The audio layer contains direct `sounddevice` capture/playback adapters and VAD buffer logic. No prebuilt voice assistant wrapper is used.
+The audio layer contains direct `sounddevice` capture/playback adapters and VAD buffer logic. No prebuilt voice assistant wrapper is used. Use `--interactive` for the real barge-in demo: the microphone remains active in playback-monitoring mode while TTS speaks, user speech raises the interrupt flag, playback stops, the partial response is marked truncated, and the next utterance is captured as a fresh buffer.
 
 ## Phase 2: Parallel Execution and Consensus
 

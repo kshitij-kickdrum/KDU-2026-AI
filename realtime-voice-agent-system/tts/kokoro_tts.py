@@ -37,15 +37,15 @@ class TTSEngine:
         text: str,
         interrupt_flag: asyncio.Event,
         session_id: str = "unknown",
-    ) -> None:
+    ) -> bool:
         start = time.perf_counter()
         status = "success"
         try:
             if self._pipeline is None and self._load_error is None:
                 self.load()
             chunks = self._synthesize(text)
-            played = await play_chunks(chunks, self.sample_rate, interrupt_flag)
-            if not played:
+            playback_status = await play_chunks(chunks, self.sample_rate, interrupt_flag)
+            if playback_status == "fallback":
                 print(text)
         except Exception as exc:
             status = "error"
@@ -63,7 +63,7 @@ class TTSEngine:
                         "status": status,
                     }
                 )
-            return
+            return False
         if self.monitor:
             await self.monitor.log(
                 {
@@ -72,11 +72,12 @@ class TTSEngine:
                     "agent_name": "tts_engine",
                     "tool_name": "tts_synthesize",
                     "input_summary": text[:200],
-                    "output_summary": "played_or_console_fallback",
+                    "output_summary": playback_status,
                     "latency_ms": int((time.perf_counter() - start) * 1000),
                     "status": status,
                 }
             )
+        return playback_status == "interrupted"
 
     def _synthesize(self, text: str) -> Iterable[np.ndarray]:
         if self._pipeline is not None:
@@ -90,4 +91,3 @@ class TTSEngine:
             size = min(chunk, total - start)
             t = np.arange(size, dtype=np.float32) / self.sample_rate
             yield (0.05 * np.sin(2 * math.pi * 220 * t)).astype(np.float32)
-

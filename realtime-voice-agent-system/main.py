@@ -17,6 +17,7 @@ from audio.capture import AudioPipeline
 from audio.interrupt import InterruptController
 from concurrency.queue_manager import ConcurrencyQueue
 from config.settings import ConfigurationError, Settings
+from core.voice_session import VoiceSession
 from llm.llm_client import LLMClient
 from monitoring.monitor import Monitor
 from state.agent_state import AgentState
@@ -31,12 +32,20 @@ async def run_phase1(
     text: str | None,
     voice: bool = False,
     interrupt_demo: bool = False,
+    interactive: bool = False,
+    max_turns: int = 5,
 ) -> None:
     monitor = Monitor(settings.log_file_path)
     llm = LLMClient(settings.openai_api_key, settings.openrouter_api_key, settings.openrouter_base_url)
     tts = TTSEngine(monitor)
     triage = TriageAgent(llm, monitor, settings.llm_model)
     billing = BillingAgent(llm, monitor, settings.llm_model, tts_engine=tts)
+    if interactive:
+        session = VoiceSession(settings, monitor, triage, billing, tts, max_turns)
+        session_id = await session.run()
+        print(f"session_id={session_id}")
+        return
+
     interrupt = InterruptController()
     session_id = str(uuid4())
     await monitor.log({"record_type": "session_start", "session_id": session_id, "status": "active", "total_turns": 0, "total_latency_ms": 0})
@@ -177,6 +186,12 @@ async def main_async() -> None:
     parser.add_argument("--text", help="Typed transcript for Phase 1 demo")
     parser.add_argument("--voice", action="store_true", help="Use microphone capture for Phase 1")
     parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Run continuous Phase 1 voice loop with live barge-in interruption",
+    )
+    parser.add_argument("--max-turns", type=int, default=5)
+    parser.add_argument(
         "--interrupt-demo",
         action="store_true",
         help="Trigger a deterministic playback interruption during Phase 1",
@@ -188,7 +203,14 @@ async def main_async() -> None:
     if args.transcribe_audio:
         await transcribe_once(settings, args.transcribe_audio)
     elif args.phase == "1":
-        await run_phase1(settings, args.text, args.voice, args.interrupt_demo)
+        await run_phase1(
+            settings,
+            args.text,
+            args.voice,
+            args.interrupt_demo,
+            args.interactive,
+            args.max_turns,
+        )
     elif args.phase == "2":
         await run_phase2(settings, args.query)
     else:
