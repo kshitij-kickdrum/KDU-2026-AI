@@ -44,7 +44,12 @@ class TTSEngine:
             if self._pipeline is None and self._load_error is None:
                 self.load()
             chunks = self._synthesize(text)
-            playback_status = await play_chunks(chunks, self.sample_rate, interrupt_flag)
+            playback_status = await play_chunks(
+                chunks,
+                self.sample_rate,
+                interrupt_flag,
+                max_chunk_ms=self.chunk_ms,
+            )
             if playback_status == "fallback":
                 print(text)
         except Exception as exc:
