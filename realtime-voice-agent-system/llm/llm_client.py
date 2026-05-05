@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import time
 from dataclasses import dataclass
+from collections.abc import AsyncIterator
 from typing import Any
 
 import httpx
@@ -77,6 +78,36 @@ class LLMClient:
             error=str(last_error or "no_llm_provider_configured"),
         )
 
+    async def stream_complete(
+        self, messages: list[dict[str, str]], model: str = "gpt-4o-mini"
+    ) -> AsyncIterator[str]:
+        providers = [self._primary, self._fallback]
+        last_error: Exception | None = None
+        for client in providers:
+            if client is None:
+                continue
+            try:
+                stream = await asyncio.wait_for(
+                    client.chat.completions.create(
+                        model=model,
+                        messages=messages,
+                        stream=True,
+                    ),
+                    timeout=self.timeout_seconds,
+                )
+                async for chunk in stream:
+                    if not chunk.choices:
+                        continue
+                    delta = chunk.choices[0].delta.content
+                    if delta:
+                        yield delta
+                return
+            except Exception as exc:
+                last_error = exc
+                if not _is_retryable(exc):
+                    break
+        raise RuntimeError(str(last_error or "no_llm_provider_configured"))
+
     async def _call(
         self, client: AsyncOpenAI, messages: list[dict[str, str]], model: str
     ) -> LLMResponse:
@@ -107,4 +138,3 @@ def _retry_after(exc: Exception) -> float:
         return float(headers.get("retry-after", 5))
     except (TypeError, ValueError):
         return 5.0
-

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import suppress
 import time
 from uuid import uuid4
 
@@ -99,29 +100,67 @@ class VoiceSession:
         )
         base_state.transcript = transcript
         self._state = await self.triage_agent.classify(transcript, base_state)
-        response = await self.billing_agent.respond(self._state)
-        print(f"assistant: {response}")
+        await self._stream_billing_response(self._state)
+
+    async def _stream_billing_response(self, state: AgentState) -> None:
+        sentence_queue: asyncio.Queue[str | None] = asyncio.Queue()
+        spoken_parts: list[str] = []
+
+        async def produce_sentences() -> None:
+            try:
+                async for sentence in self.billing_agent.stream_response_sentences(
+                    state
+                ):
+                    await sentence_queue.put(sentence)
+            finally:
+                await sentence_queue.put(None)
+
+        producer = asyncio.create_task(produce_sentences())
 
         self.interrupt.clear()
         self.pipeline.set_playing(True)
+        interrupted = False
         try:
-            interrupted = await self.tts_engine.synthesize_and_play(
-                response,
-                self.interrupt.flag,
-                self.session_id,
-            )
+            print("assistant: ", end="", flush=True)
+            while True:
+                sentence = await sentence_queue.get()
+                if sentence is None:
+                    break
+                print(sentence + " ", end="", flush=True)
+                sentence_interrupted = await self.tts_engine.synthesize_and_play(
+                    sentence,
+                    self.interrupt.flag,
+                    self.session_id,
+                )
+                if sentence_interrupted or self.interrupt.is_interrupted():
+                    interrupted = True
+                    break
+                spoken_parts.append(sentence)
+            print()
         finally:
             self.pipeline.set_playing(False)
 
-        if interrupted or self.interrupt.is_interrupted():
-            self.billing_agent.mark_truncated(self._state, response)
+        if interrupted:
+            producer.cancel()
+            with suppress(asyncio.CancelledError):
+                await producer
+            spoken_text = " ".join(spoken_parts)
+            generated_text = (
+                state.message_history[-1].get("content", "")
+                if state.message_history
+                else spoken_text
+            )
+            unspoken_text = generated_text[len(spoken_text) :]
+            self.billing_agent.mark_truncated(state, unspoken_text)
             await self.monitor.log(
                 {
                     "record_type": "interrupt_event",
                     "session_id": self.session_id,
-                    "truncated_response_length": len(response),
+                    "truncated_response_length": len(unspoken_text),
                     "interrupt_source": "user_speech",
                 }
             )
             print("Interrupted. Listening for your new utterance...")
             self.interrupt.clear()
+        else:
+            await producer

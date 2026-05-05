@@ -53,11 +53,11 @@ Flow:
 
 1. `TriageAgent` classifies the transcript.
 2. It passes an `AgentState` snapshot containing `session_id`, `intent`, `transcript`, `message_history`, `timestamp_utc`, and `metadata`.
-3. `BillingAgent` generates a response capped at 150 words.
+3. In interactive mode, `BillingAgent` streams LLM text, buffers complete sentences, and sends each sentence to TTS immediately.
 4. `TTSEngine` uses Kokoro when available, otherwise prints/plays a generated fallback tone.
 5. Interrupts use an `asyncio.Event`; playback checks the flag between short chunks and stops within the chunk boundary.
 
-The audio layer contains direct `sounddevice` capture/playback adapters and VAD buffer logic. No prebuilt voice assistant wrapper is used. Use `--interactive` for the real barge-in demo: the microphone remains active in playback-monitoring mode while TTS speaks, user speech raises the interrupt flag, playback stops, the partial response is marked truncated, and the next utterance is captured as a fresh buffer.
+The audio layer contains direct `sounddevice` capture/playback adapters and VAD buffer logic. No prebuilt voice assistant wrapper is used. Use `--interactive` for the real barge-in demo: the microphone remains active in playback-monitoring mode while sentence-level TTS speaks, user speech raises the interrupt flag, playback stops, the active LLM stream is cancelled, the partial response is marked truncated, and the next utterance is captured as a fresh buffer.
 
 ## Phase 2: Parallel Execution and Consensus
 
